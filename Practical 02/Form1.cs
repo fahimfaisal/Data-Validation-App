@@ -46,11 +46,11 @@ namespace DataValidation
                     allocationsToolStripMenuItem.Enabled = true;
 
                     MessageBox.Show(taskAllocation.cffFilename);
-                    //if (taskAllocation.Validate(taffFilename) && configuration.Validate(taskAllocation.cffFilename))
-                    //{
+                    if (taskAllocation.Validate(taffFilename) && configuration.Validate(taskAllocation.cffFilename))
+                    {
 
-                    //    
-                    //}
+
+                    }
 
                 }
 

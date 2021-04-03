@@ -40,7 +40,7 @@ namespace DataValidation
                             if (line.IndexOfAny(Path.GetInvalidFileNameChars()) == -1)
                             {
                                 String path = Path.GetDirectoryName(taffFilename);
-                                cffFilename = path + line;
+                                cffFilename = path + Path.DirectorySeparatorChar +line;
                             }
                             else
                             {
@@ -59,6 +59,12 @@ namespace DataValidation
                 }
             }
             sr.Close();
+
+            if (cffFilename == null)
+            {
+                Errors.Add("Missing Keyword");
+            }
+
             return (Errors.Count == 0);
 
         }
