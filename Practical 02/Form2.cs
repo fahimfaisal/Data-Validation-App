@@ -8,15 +8,22 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace Practical_02
+namespace DataValidation
 {
     public partial class Errors : Form
     {
+
+        //get property
+        public WebBrowser getBrowser  { get{ return webBrowser1; } }
+
+
+
         public Errors()
         {
+            
             InitializeComponent();
 
-            webBrowser1.DocumentText = "errors";
+           //webBrowser1.DocumentText = "errors";
         }
     }
 }

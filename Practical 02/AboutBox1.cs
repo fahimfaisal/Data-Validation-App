@@ -7,7 +7,7 @@ using System.Reflection;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace Practical_02
+namespace DataValidation
 {
     partial class AboutBox1 : Form
     {

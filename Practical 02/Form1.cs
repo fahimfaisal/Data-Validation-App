@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.IO;
 
-namespace Practical_02
+namespace DataValidation
 {
     public partial class Form1 : Form
     {
@@ -33,18 +33,17 @@ namespace Practical_02
             {
                 String path = filedialog.FileName;
 
-                StreamReader streamReader = new StreamReader(path);
+                
 
-                String line = "";
+                FileReader fileReader = new FileReader();
+               
 
-                while (!streamReader.EndOfStream)
-                {
-                    line += "<p>" + streamReader.ReadLine() + "</p>";
-                }
+                String data = fileReader.readData(path);
+               
 
-                webBrowser1.DocumentText = line;
+                webBrowser1.DocumentText = data;
 
-               streamReader.Close();
+          
             }
 
 
@@ -59,7 +58,11 @@ namespace Practical_02
         private void errorsToolStripMenuItem_Click(object sender, EventArgs e)
         {
             Errors errorWindow = new Errors();
+
+            errorWindow.getBrowser.DocumentText = "new test";
               errorWindow.Show();
+
+            
         }
     }
 }

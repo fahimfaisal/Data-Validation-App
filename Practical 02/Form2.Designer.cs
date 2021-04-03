@@ -1,5 +1,5 @@
 ﻿
-namespace Practical_02
+namespace DataValidation
 {
     partial class Errors
     {
