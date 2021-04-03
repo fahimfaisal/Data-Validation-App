@@ -19,10 +19,7 @@ namespace DataValidation
             {
                
                 line += "<p>" + streamReader.ReadLine() + "</p>";
-                if (line.Contains(Resource1.CONFIG_DATA))
-                {
-                    line += "Found!";
-                }
+                
             }
 
             streamReader.Close();

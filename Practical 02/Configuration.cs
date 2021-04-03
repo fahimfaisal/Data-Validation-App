@@ -8,5 +8,9 @@ namespace DataValidation
 {
     class Configuration
     {
+        public Boolean Validate(string taffFilename)
+        {
+            return true;
+        }
     }
 }

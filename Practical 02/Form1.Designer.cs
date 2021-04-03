@@ -35,11 +35,12 @@ namespace DataValidation
             this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.validateToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.viewToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.errorsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.filedialog = new System.Windows.Forms.OpenFileDialog();
             this.webBrowser1 = new System.Windows.Forms.WebBrowser();
-            this.errorsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.allocationsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -68,19 +69,21 @@ namespace DataValidation
             // openToolStripMenuItem
             // 
             this.openToolStripMenuItem.Name = "openToolStripMenuItem";
-            this.openToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.openToolStripMenuItem.Size = new System.Drawing.Size(103, 22);
             this.openToolStripMenuItem.Text = "Open";
             this.openToolStripMenuItem.Click += new System.EventHandler(this.openToolStripMenuItem_Click);
             // 
             // exitToolStripMenuItem
             // 
             this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
-            this.exitToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.exitToolStripMenuItem.Size = new System.Drawing.Size(103, 22);
             this.exitToolStripMenuItem.Text = "Exit";
             this.exitToolStripMenuItem.Click += new System.EventHandler(this.exitToolStripMenuItem_Click);
             // 
             // validateToolStripMenuItem
             // 
+            this.validateToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.allocationsToolStripMenuItem});
             this.validateToolStripMenuItem.Name = "validateToolStripMenuItem";
             this.validateToolStripMenuItem.Size = new System.Drawing.Size(60, 20);
             this.validateToolStripMenuItem.Text = "Validate";
@@ -92,6 +95,13 @@ namespace DataValidation
             this.viewToolStripMenuItem.Name = "viewToolStripMenuItem";
             this.viewToolStripMenuItem.Size = new System.Drawing.Size(47, 20);
             this.viewToolStripMenuItem.Text = "View ";
+            // 
+            // errorsToolStripMenuItem
+            // 
+            this.errorsToolStripMenuItem.Name = "errorsToolStripMenuItem";
+            this.errorsToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.errorsToolStripMenuItem.Text = "Errors";
+            this.errorsToolStripMenuItem.Click += new System.EventHandler(this.errorsToolStripMenuItem_Click);
             // 
             // helpToolStripMenuItem
             // 
@@ -111,6 +121,7 @@ namespace DataValidation
             // filedialog
             // 
             this.filedialog.FileName = "filedialog";
+            this.filedialog.Filter = "TAFF Files|*.taff";
             // 
             // webBrowser1
             // 
@@ -121,12 +132,12 @@ namespace DataValidation
             this.webBrowser1.Size = new System.Drawing.Size(800, 426);
             this.webBrowser1.TabIndex = 1;
             // 
-            // errorsToolStripMenuItem
+            // allocationsToolStripMenuItem
             // 
-            this.errorsToolStripMenuItem.Name = "errorsToolStripMenuItem";
-            this.errorsToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.errorsToolStripMenuItem.Text = "Errors";
-            this.errorsToolStripMenuItem.Click += new System.EventHandler(this.errorsToolStripMenuItem_Click);
+            this.allocationsToolStripMenuItem.Enabled = false;
+            this.allocationsToolStripMenuItem.Name = "allocationsToolStripMenuItem";
+            this.allocationsToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.allocationsToolStripMenuItem.Text = "Allocations";
             // 
             // Form1
             // 
@@ -158,6 +169,7 @@ namespace DataValidation
         private System.Windows.Forms.OpenFileDialog filedialog;
         private System.Windows.Forms.WebBrowser webBrowser1;
         private System.Windows.Forms.ToolStripMenuItem errorsToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem allocationsToolStripMenuItem;
     }
 }
 

@@ -61,20 +61,20 @@ namespace DataValidation {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to FILENAME.
+        /// </summary>
+        internal static string config {
+            get {
+                return ResourceManager.GetString("config", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to CONFIGURATION-DATA.
         /// </summary>
         internal static string CONFIG_DATA {
             get {
                 return ResourceManager.GetString("CONFIG_DATA", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to FILENAME.
-        /// </summary>
-        internal static string FILENAME {
-            get {
-                return ResourceManager.GetString("FILENAME", resourceCulture);
             }
         }
     }

@@ -117,10 +117,10 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="config" xml:space="preserve">
+    <value>FILENAME</value>
+  </data>
   <data name="CONFIG_DATA" xml:space="preserve">
     <value>CONFIGURATION-DATA</value>
-  </data>
-  <data name="FILENAME" xml:space="preserve">
-    <value>FILENAME</value>
   </data>
 </root>

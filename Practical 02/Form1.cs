@@ -31,14 +31,33 @@ namespace DataValidation
 
             if (result == DialogResult.OK)
             {
-                String path = filedialog.FileName;
-
-                
+                String taffFilename= filedialog.FileName;
 
                 FileReader fileReader = new FileReader();
-               
+                TaskAllocation taskAllocation = new TaskAllocation();
+                Configuration configuration = new Configuration();
 
-                String data = fileReader.readData(path);
+                //taskAllocation.cffFilename;
+
+                if(taskAllocation.getCffFilename(taffFilename))
+                {
+
+
+                    allocationsToolStripMenuItem.Enabled = true;
+
+                    MessageBox.Show(taskAllocation.cffFilename);
+                    //if (taskAllocation.Validate(taffFilename) && configuration.Validate(taskAllocation.cffFilename))
+                    //{
+
+                    //    
+                    //}
+
+                }
+
+
+
+
+                String data = fileReader.readData(taffFilename);
                
 
                 webBrowser1.DocumentText = data;
@@ -59,7 +78,7 @@ namespace DataValidation
         {
             Errors errorWindow = new Errors();
 
-            errorWindow.getBrowser.DocumentText = "new test";
+            errorWindow.getBrowser.DocumentText = "error";
               errorWindow.Show();
 
             
