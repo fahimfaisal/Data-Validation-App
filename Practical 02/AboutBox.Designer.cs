@@ -1,7 +1,7 @@
 ﻿
 namespace DataValidation
 {
-    partial class AboutBox1
+    partial class AboutBox
     {
         /// <summary>
         /// Required designer variable.
@@ -28,7 +28,7 @@ namespace DataValidation
         /// </summary>
         private void InitializeComponent()
         {
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(AboutBox1));
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(AboutBox));
             this.tableLayoutPanel = new System.Windows.Forms.TableLayoutPanel();
             this.logoPictureBox = new System.Windows.Forms.PictureBox();
             this.labelProductName = new System.Windows.Forms.Label();

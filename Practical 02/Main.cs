@@ -11,9 +11,9 @@ using System.IO;
 
 namespace DataValidation
 {
-    public partial class Form1 : Form
+    public partial class Main : Form
     {
-        public Form1()
+        public Main()
         {
             InitializeComponent();
         }
@@ -46,6 +46,7 @@ namespace DataValidation
                     allocationsToolStripMenuItem.Enabled = true;
 
                     MessageBox.Show(taskAllocation.cffFilename);
+                   
                     if (taskAllocation.Validate(taffFilename) && configuration.Validate(taskAllocation.cffFilename))
                     {
 
@@ -70,7 +71,7 @@ namespace DataValidation
 
         private void aboutToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            AboutBox1 aboutBox = new AboutBox1();
+            AboutBox aboutBox = new AboutBox();
             aboutBox.ShowDialog();
         }
 
@@ -79,7 +80,8 @@ namespace DataValidation
             Errors errorWindow = new Errors();
 
             errorWindow.getBrowser.DocumentText = "error";
-              errorWindow.Show();
+            
+            errorWindow.Show();
 
             
         }

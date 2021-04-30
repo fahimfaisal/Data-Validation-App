@@ -27,7 +27,7 @@ namespace DataValidation
                 String line = sr.ReadLine();
                 line = line.Trim();
 
-                if (line.StartsWith("FILENAME"))
+                if (line.StartsWith(Resource1.config))
                 {
                     String[] data = line.Split('=');
 

@@ -1,7 +1,7 @@
 ﻿
 namespace DataValidation
 {
-    partial class Form1
+    partial class Main
     {
         /// <summary>
         /// Required designer variable.
@@ -34,13 +34,13 @@ namespace DataValidation
             this.openToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.validateToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.allocationsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.viewToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.errorsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.filedialog = new System.Windows.Forms.OpenFileDialog();
             this.webBrowser1 = new System.Windows.Forms.WebBrowser();
-            this.allocationsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -88,6 +88,13 @@ namespace DataValidation
             this.validateToolStripMenuItem.Size = new System.Drawing.Size(60, 20);
             this.validateToolStripMenuItem.Text = "Validate";
             // 
+            // allocationsToolStripMenuItem
+            // 
+            this.allocationsToolStripMenuItem.Enabled = false;
+            this.allocationsToolStripMenuItem.Name = "allocationsToolStripMenuItem";
+            this.allocationsToolStripMenuItem.Size = new System.Drawing.Size(133, 22);
+            this.allocationsToolStripMenuItem.Text = "Allocations";
+            // 
             // viewToolStripMenuItem
             // 
             this.viewToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -99,7 +106,7 @@ namespace DataValidation
             // errorsToolStripMenuItem
             // 
             this.errorsToolStripMenuItem.Name = "errorsToolStripMenuItem";
-            this.errorsToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.errorsToolStripMenuItem.Size = new System.Drawing.Size(104, 22);
             this.errorsToolStripMenuItem.Text = "Errors";
             this.errorsToolStripMenuItem.Click += new System.EventHandler(this.errorsToolStripMenuItem_Click);
             // 
@@ -114,7 +121,7 @@ namespace DataValidation
             // aboutToolStripMenuItem
             // 
             this.aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
-            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(107, 22);
             this.aboutToolStripMenuItem.Text = "About";
             this.aboutToolStripMenuItem.Click += new System.EventHandler(this.aboutToolStripMenuItem_Click);
             // 
@@ -131,13 +138,6 @@ namespace DataValidation
             this.webBrowser1.Name = "webBrowser1";
             this.webBrowser1.Size = new System.Drawing.Size(800, 426);
             this.webBrowser1.TabIndex = 1;
-            // 
-            // allocationsToolStripMenuItem
-            // 
-            this.allocationsToolStripMenuItem.Enabled = false;
-            this.allocationsToolStripMenuItem.Name = "allocationsToolStripMenuItem";
-            this.allocationsToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.allocationsToolStripMenuItem.Text = "Allocations";
             // 
             // Form1
             // 

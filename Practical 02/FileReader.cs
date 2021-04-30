@@ -13,18 +13,28 @@ namespace DataValidation
         public string readData(String path)
         {
             StreamReader streamReader = new StreamReader(path);
-            String line = "";
+            String data = "";
 
             while (!streamReader.EndOfStream)
             {
+
+                String line = streamReader.ReadLine();
+                if (line.Contains(Resource1.config))
+                {
+                    data += "<p style='color:red'>" + line + "</p>";
+
+                }
+                else
+                {
+                    data += "<p>" + line + "</p>";
+                }
                
-                line += "<p>" + streamReader.ReadLine() + "</p>";
                 
             }
 
             streamReader.Close();
 
-            return line;
+            return data;
         }
     }
 }
