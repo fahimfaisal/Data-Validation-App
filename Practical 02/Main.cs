@@ -116,16 +116,21 @@ namespace DataValidation
 
             Validator validator = new Validator();
 
-           double[] time = validator.TimeValidation(taskAllocation, configuration);
-            string line = "";
-
-            foreach (Double doub in time)
+            IDictionary<Allocation, double[]> timeEnergy = validator.TimeValidation(taskAllocation, configuration);
+            string Time = "";
+            String id = "";
+            double Energy =0d;
+            foreach (var time in timeEnergy)
             {
-                line += "+" + doub.ToString();
+                id = time.Key.ID.ToString() + " "+',';
+                Time = time.Value[int.Parse(Keywords.TOTALTIME)].ToString()+ " " + ',';
+                Energy = time.Value[int.Parse(Keywords.TOTALENERGY)];
+
+                break;
             }
 
 
-            allocationWindow.validationBrowser.DocumentText = line;
+            allocationWindow.validationBrowser.DocumentText = "ENERGY " + String.Format("{0:0.##}", Energy)+ "Times " + Time+ "ID " + id;
 
             allocationWindow.Show();
 

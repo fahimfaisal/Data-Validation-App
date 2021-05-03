@@ -30,7 +30,7 @@ namespace DataValidation
                 String line = sr.ReadLine();
                 line = line.Trim();
 
-                if (line.StartsWith(Resource1.config))
+                if (line.StartsWith(Keywords.config))
                 {
                     String[] data = line.Split('=');
 

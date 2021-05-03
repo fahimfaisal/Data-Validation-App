@@ -123,4 +123,10 @@
   <data name="CONFIG_DATA" xml:space="preserve">
     <value>CONFIGURATION-DATA</value>
   </data>
+  <data name="TOTALENERGY" xml:space="preserve">
+    <value>1</value>
+  </data>
+  <data name="TOTALTIME" xml:space="preserve">
+    <value>0</value>
+  </data>
 </root>

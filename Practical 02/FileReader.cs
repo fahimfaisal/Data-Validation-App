@@ -19,7 +19,7 @@ namespace DataValidation
             {
 
                 String line = streamReader.ReadLine();
-                if (line.Contains(Resource1.config))
+                if (line.Contains(Keywords.config))
                 {
                     data += "<p style='color:red'>" + line + "</p>";
 

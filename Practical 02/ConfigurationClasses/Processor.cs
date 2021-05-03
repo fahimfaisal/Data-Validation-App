@@ -41,16 +41,28 @@ namespace DataValidation.ConfigurationClasses
             
         }
 
-        public Boolean CheckRam(Task task)
+        public double CalcEnergy(Task task)
         {
-            if (Ram >= task.ram)
-                return true;
+            double val = CalcTime(task) * (Type.C2 * Frequency * Frequency + Type.C1 * Frequency + Type.C0);
 
-
-
-            return false;
+            return val;
         }
 
+        public bool CheckRam(Task task)
+        {
+            return Ram >= task.ram ? true : false;
+   
+        }
+
+        public bool CheckDownloadSpeed(Task task)
+        {
+            return Download >= task.download ? true : false;
+        }
+
+        public bool CheckUploadSpeed(Task task)
+        {
+            return Upload >= task.upload ? true : false;
+        }
 
 
     }
