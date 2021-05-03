@@ -4,7 +4,7 @@ using System;
 namespace UnitTests
 {
     [TestClass]
-    public class UnitTest1
+    public class UnitTest
     {
         [TestMethod]
         public void TestMethod1()

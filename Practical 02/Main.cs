@@ -8,11 +8,18 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.IO;
+using DataValidation.ConfigurationClasses;
+using DataValidation.TaskAllocationClasses;
 
 namespace DataValidation
 {
     public partial class Main : Form
     {
+        String cffFilename;
+         public String taffFilename;
+        Configuration configuration;
+        TaskAllocation taskAllocation;
+        
         public Main()
         {
             InitializeComponent();
@@ -27,27 +34,36 @@ namespace DataValidation
         {
             // OPEN A TASK ALLOCATION FILE 
 
+            CffFile cff = new CffFile();
+            
             DialogResult result = filedialog.ShowDialog();
 
             if (result == DialogResult.OK)
             {
-                String taffFilename= filedialog.FileName;
-
+                taffFilename= filedialog.FileName;
+                
                 FileReader fileReader = new FileReader();
-                TaskAllocation taskAllocation = new TaskAllocation();
-                Configuration configuration = new Configuration();
+                taskAllocation = new TaskAllocation();
+               
 
                 //taskAllocation.cffFilename;
 
                 if(taskAllocation.getCffFilename(taffFilename))
                 {
 
+         
+                    cffFilename = taskAllocation.cffFilename;
+
+                    //CREATE CONFIGURATION OBJECT
+
+                    configuration = new Configuration(taskAllocation.cffFilename);
+                    
 
                     allocationsToolStripMenuItem.Enabled = true;
 
                     MessageBox.Show(taskAllocation.cffFilename);
                    
-                    if (taskAllocation.Validate(taffFilename) && configuration.Validate(taskAllocation.cffFilename))
+                    if (taskAllocation.Validate(taffFilename) && configuration.Validate())
                     {
 
                         MessageBox.Show(configuration.Logfile);
@@ -59,10 +75,12 @@ namespace DataValidation
 
 
                 String data = fileReader.readData(taffFilename);
-               
+                String line = fileReader.readData(cffFilename);
 
                 webBrowser1.DocumentText = data;
+                cff.CffBrowser.DocumentText = line;
 
+                cff.Show();
           
             }
 
@@ -84,6 +102,33 @@ namespace DataValidation
             errorWindow.Show();
 
             
+        }
+
+        private void allocationsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            AllocationValidation allocationWindow = new AllocationValidation();
+
+
+            taskAllocation.GetAllocations(taffFilename);
+
+            configuration.GetProcessors();
+            configuration.GetTasks();
+
+            Validator validator = new Validator();
+
+           double[] time = validator.TimeValidation(taskAllocation, configuration);
+            string line = "";
+
+            foreach (Double doub in time)
+            {
+                line += "+" + doub.ToString();
+            }
+
+
+            allocationWindow.validationBrowser.DocumentText = line;
+
+            allocationWindow.Show();
+
         }
     }
 }
