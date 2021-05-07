@@ -11,16 +11,16 @@ namespace DataValidation.ConfigurationClasses
         public int ID { get; set; }
         public double runtime { get; set; }
         public double referenceFrequency { get; set; }
-        public double ram { get; set; }
-        public double download { get; set; }
-        public double upload { get; set; }
+        public int ram { get; set; }
+        public int download { get; set; }
+        public int upload { get; set; }
 
 
         public Task()
         {
 
         }
-        public Task(int Id, Double runtime, Double referenceFrequency, Double ram, Double download, Double upload)
+        public Task(int Id, Double runtime, Double referenceFrequency, int ram, int download, int upload)
         {
             this.ID = Id;
             this.runtime = runtime;

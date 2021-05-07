@@ -24,10 +24,10 @@ namespace DataValidation
        
         public List<ProcessorType> processorTypes;
 
-        double[,] LocalCommunication {get;set;}
+        public  double[,] LocalCommunication {get;set;}
 
 
-        double[,] RemoteCommunication { get; set; }
+        public double[,] RemoteCommunication { get; set; }
 
         IDictionary<String, Double> Limits { get; set; }
 
@@ -173,7 +173,7 @@ namespace DataValidation
                                 {
                                     String[] data = line.Split('=');
 
-                                    task.ram = double.Parse(data[1]);
+                                    task.ram = int.Parse(data[1]);
 
 
 
@@ -184,7 +184,7 @@ namespace DataValidation
                                 {
                                     String[] data = line.Split('=');
 
-                                    task.download = double.Parse(data[1]);
+                                    task.download = int.Parse(data[1]);
 
 
 
@@ -195,7 +195,7 @@ namespace DataValidation
                                 {
                                     String[] data = line.Split('=');
 
-                                    task.upload = double.Parse(data[1]);
+                                    task.upload = int.Parse(data[1]);
 
 
 
@@ -215,7 +215,7 @@ namespace DataValidation
                 }
 
             }
-            sr.Close();
+            
         }
 
 
@@ -287,21 +287,21 @@ namespace DataValidation
                                 {
                                     String[] data = line.Split('=');
 
-                                    processor.Ram = double.Parse(data[1]);
+                                    processor.Ram = int.Parse(data[1]);
                                 }
 
                                 if (line.StartsWith("DOWNLOAD"))
                                 {
                                     String[] data = line.Split('=');
 
-                                    processor.Download = double.Parse(data[1]);
+                                    processor.Download = int.Parse(data[1]);
                                 }
 
                                 if (line.StartsWith("UPLOAD"))
                                 {
                                     String[] data = line.Split('=');
 
-                                    processor.Upload = double.Parse(data[1]);
+                                    processor.Upload = int.Parse(data[1]);
                                 }
 
 
@@ -317,7 +317,7 @@ namespace DataValidation
 
                 }
             }
-            sr.Close();
+            
           
 
         }
@@ -384,7 +384,7 @@ namespace DataValidation
                 }
 
             }
-            sr.Close();
+            
 
         }
 
@@ -432,7 +432,7 @@ namespace DataValidation
                 }
 
             }
-            sr.Close();
+            
         }
 
         public void GetRemoteCommunication()
@@ -461,11 +461,11 @@ namespace DataValidation
 
                             RemoteCommunication = new double[taskRow.Length, taskColumn.Length];
 
-                            for (int i = 0; i < LocalCommunication.GetLength(0); i++)
+                            for (int i = 0; i < RemoteCommunication.GetLength(0); i++)
                             {
                                 String[] number = taskRow[i].Split(',');
 
-                                for (int j = 0; j < LocalCommunication.GetLength(1); j++)
+                                for (int j = 0; j < RemoteCommunication.GetLength(1); j++)
                                 {
                                     RemoteCommunication[i, j] = double.Parse(number[j]);
                                 }
@@ -477,7 +477,7 @@ namespace DataValidation
                     }
 
                 }
-                sr.Close();
+                
             }
         }
 
@@ -646,6 +646,9 @@ namespace DataValidation
             }
             sr.Close();
         }
+
+
+       
 
 
     }

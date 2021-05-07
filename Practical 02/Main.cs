@@ -16,7 +16,7 @@ namespace DataValidation
     public partial class Main : Form
     {
         String cffFilename;
-         public String taffFilename;
+        String taffFilename;
         Configuration configuration;
         TaskAllocation taskAllocation;
         
@@ -33,6 +33,10 @@ namespace DataValidation
         private void openToolStripMenuItem_Click(object sender, EventArgs e)
         {
             // OPEN A TASK ALLOCATION FILE 
+            Errors errorWindow = new Errors();
+
+            List<string> errors;
+            List<string> err;
 
             CffFile cff = new CffFile();
             
@@ -41,7 +45,14 @@ namespace DataValidation
             if (result == DialogResult.OK)
             {
                 taffFilename= filedialog.FileName;
-                
+
+                MessageBox.Show(taffFilename);
+
+
+
+
+
+
                 FileReader fileReader = new FileReader();
                 taskAllocation = new TaskAllocation();
                
@@ -74,10 +85,25 @@ namespace DataValidation
 
 
 
-                String data = fileReader.readData(taffFilename);
-                String line = fileReader.readData(cffFilename);
+                String data = fileReader.readTaff(taffFilename, out err);
+                String line = fileReader.Readcff(cffFilename, out errors);
+               
+                string path = @"D:\test.txt";
+                if (!File.Exists(path))
+                {
+                    // Create a file to write to.
+                    using (StreamWriter sw = File.CreateText(path))
+                    {
+                        foreach  (string error in errors)
+                        {
+                            sw.WriteLine(error);
+                        }
+                    }
+                }
+                errorWindow.getBrowser.DocumentText = "";
 
                 webBrowser1.DocumentText = data;
+                
                 cff.CffBrowser.DocumentText = line;
 
                 cff.Show();
@@ -108,18 +134,24 @@ namespace DataValidation
         {
             AllocationValidation allocationWindow = new AllocationValidation();
 
-
+            configuration.GetRemoteCommunication();
+            configuration.GetLocalCommunication();
             taskAllocation.GetAllocations(taffFilename);
 
             configuration.GetProcessors();
             configuration.GetTasks();
+            
+
 
             Validator validator = new Validator();
 
-            IDictionary<Allocation, double[]> timeEnergy = validator.TimeValidation(taskAllocation, configuration);
+            IDictionary<Allocation, double[]> timeEnergy = validator.valid(taskAllocation, configuration);
             string Time = "";
             String id = "";
             double Energy =0d;
+            
+            string test = validator.ValidationAllocations(taskAllocation, configuration);
+
             foreach (var time in timeEnergy)
             {
                 id = time.Key.ID.ToString() + " "+',';
@@ -130,7 +162,8 @@ namespace DataValidation
             }
 
 
-            allocationWindow.validationBrowser.DocumentText = "ENERGY " + String.Format("{0:0.##}", Energy)+ "Times " + Time+ "ID " + id;
+            //allocationWindow.validationBrowser.DocumentText = "ENERGY " + String.Format("{0:0.##}", Energy)+ "Times " + Time+ "ID " + id;
+            allocationWindow.validationBrowser.DocumentText = test;
 
             allocationWindow.Show();
 

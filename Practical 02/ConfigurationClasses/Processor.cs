@@ -10,11 +10,11 @@ namespace DataValidation.ConfigurationClasses
     {
        public int ID { get; set; }
        public ProcessorType Type { get; set; }
-       public Double Frequency { get; set; }
-        public Double Ram { get; set; }
-        public Double Download { get; set; }
+        public Double Frequency { get; set; }
+        public int Ram { get; set; }
+        public int Download { get; set; }
         
-       public Double Upload { get; set; }
+       public int Upload { get; set; }
 
         
 
@@ -22,7 +22,7 @@ namespace DataValidation.ConfigurationClasses
         {
 
         }
-        public Processor(int Id, ProcessorType type, Double frequency, Double ram, Double download, Double upload)
+        public Processor(int Id, ProcessorType type, Double frequency, int ram, int download, int upload)
         {
             this.ID = Id;
             this.Type = type;
