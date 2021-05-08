@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace DataValidation.ConfigurationClasses
 {
-    class Task
+    public class Task
     {
         public int ID { get; set; }
         public double runtime { get; set; }

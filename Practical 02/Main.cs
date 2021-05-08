@@ -19,11 +19,13 @@ namespace DataValidation
         String taffFilename;
         Configuration configuration;
         TaskAllocation taskAllocation;
-        
+        Errors errorWindow = new Errors();
         public Main()
         {
             InitializeComponent();
+
         }
+
 
         private void exitToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -33,81 +35,196 @@ namespace DataValidation
         private void openToolStripMenuItem_Click(object sender, EventArgs e)
         {
             // OPEN A TASK ALLOCATION FILE 
-            Errors errorWindow = new Errors();
-
-            List<string> errors;
-            List<string> err;
-
             CffFile cff = new CffFile();
+            FileReader fileReader = new FileReader();
             
+            string logFile;
+            
+
+            List<string> errorsTaff = new List<string>();
+            List<string> errorsCff = new List<string>(); ;
+            List<string> ErrorList = new List<string>();
+
+
             DialogResult result = filedialog.ShowDialog();
 
             if (result == DialogResult.OK)
             {
-                taffFilename= filedialog.FileName;
+                taffFilename = filedialog.FileName;
 
                 MessageBox.Show(taffFilename);
 
-
-
-
-
-
-                FileReader fileReader = new FileReader();
+                String taffData = fileReader.readTaff(taffFilename, out errorsTaff);
+                
                 taskAllocation = new TaskAllocation();
-               
+                
+                webBrowser1.DocumentText = taffData;
 
-                //taskAllocation.cffFilename;
-
-                if(taskAllocation.getCffFilename(taffFilename))
+                
+                if (taskAllocation.getCffFilename(taffFilename))
                 {
-
-         
                     cffFilename = taskAllocation.cffFilename;
 
-                    //CREATE CONFIGURATION OBJECT
-
-                    configuration = new Configuration(taskAllocation.cffFilename);
-                    
-
-                    allocationsToolStripMenuItem.Enabled = true;
-
                     MessageBox.Show(taskAllocation.cffFilename);
-                   
-                    if (taskAllocation.Validate(taffFilename) && configuration.Validate())
+
+                    String CffData = fileReader.Readcff(cffFilename, out errorsCff);
+                    cff.CffBrowser.DocumentText = CffData;
+                    cff.Show();
+
+                    
+                            
+                    configuration = new Configuration(cffFilename);
+
+                    if (configuration.Validate())
                     {
+                         logFile = configuration.Logfile;
 
-                        MessageBox.Show(configuration.Logfile);
-                    }
-
-                }
-
-
-
-
-                String data = fileReader.readTaff(taffFilename, out err);
-                String line = fileReader.Readcff(cffFilename, out errors);
-               
-                string path = @"D:\test.txt";
-                if (!File.Exists(path))
-                {
-                    // Create a file to write to.
-                    using (StreamWriter sw = File.CreateText(path))
-                    {
-                        foreach  (string error in errors)
+                        if (File.Exists(logFile))
                         {
-                            sw.WriteLine(error);
+                            File.Delete(logFile);
                         }
+
+                        ErrorList = errorsTaff.Concat(errorsCff).ToList();
+
+
+
+                        using (StreamWriter sw = File.CreateText(logFile))
+                        {
+                            foreach (string error in ErrorList)
+                            {
+                                sw.WriteLine(error);
+                            }
+                        }
+
+                        if (ErrorList.Count == 0)
+                        {
+
+                        }
+
                     }
+                    else
+                    {
+                        errorsCff.Add("NO LOG FILE FOUND");
+                        string line = "";
+                        
+                        foreach (string element in ErrorList)
+                        {
+                            line += "<p>" + element + "</p>";
+                        }
+
+                        errorWindow.getBrowser.DocumentText = line;
+                        errorWindow.Show();
+
+                    }
+                        
+
+
+                    if (errorsCff.Count == 0 && errorsTaff.Count == 0)
+                    {
+                        allocationsToolStripMenuItem.Enabled = true;
+                    }
+
                 }
-                errorWindow.getBrowser.DocumentText = "";
+                else
+                {
+                    errorsTaff.Add("NO CONFIGURATION DATA FOUND ");
+                    string line = "";
+                    foreach(string element in errorsTaff)
+                    {
+                       line += "<p>" + element + "</p>";
+                    }
 
-                webBrowser1.DocumentText = data;
-                
-                cff.CffBrowser.DocumentText = line;
+                    errorWindow.getBrowser.DocumentText = line;
+                    errorWindow.Show();
+                }
 
-                cff.Show();
-          
+               
+
+
+
+
+
+                //CREATE CONFIGURATION OBJECT
+
+                //configuration = new Configuration(taskAllocation.cffFilename);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                //if (taskAllocation.Validate(taffFilename))
+                //{
+                //    String line = fileReader.Readcff(cffFilename, out errorsCff);
+                //   
+                //    cff.Show();
+
+                //    if (errors.Count == 0)
+                //    {
+                //        allocationsToolStripMenuItem.Enabled = true;
+                //    }
+
+                //   List<string> errorsConcat = err.Concat(errors).ToList();
+
+                //   configuration.Validate();
+                //   string fileName = configuration.Logfile;
+
+                //    if (File.Exists(fileName))
+                //    {
+                //        File.Delete(fileName);
+                //    }
+
+
+                //    using (StreamWriter sw = File.CreateText(fileName))
+                //    {
+                //        foreach (string error in errorsConcat)
+                //        {
+                //            sw.WriteLine(errorsConcat);
+                //        }
+                //    }
+
+
+
+
+
+                //}
+
+
+
+
+
+
+
+
+                //string path = @"D:\test.txt";
+                //if (!File.Exists(path))
+                //{
+                //    // Create a file to write to.
+                //    using (StreamWriter sw = File.CreateText(path))
+                //    {
+                //        foreach  (string error in errors)
+                //        {
+                //            sw.WriteLine(error);
+                //        }
+                //    }
+                //}
+
+                //errorWindow.getBrowser.DocumentText = "";
+
+
+
+
+
+
+
             }
 
 
@@ -121,9 +238,7 @@ namespace DataValidation
 
         private void errorsToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            Errors errorWindow = new Errors();
-
-            errorWindow.getBrowser.DocumentText = "error";
+            
             
             errorWindow.Show();
 

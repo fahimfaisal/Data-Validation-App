@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace DataValidation.ConfigurationClasses
 {
-    class ProcessorType
+    public class ProcessorType
     {
         public String  Name { get; set;}
         public double C0 { get; set; }

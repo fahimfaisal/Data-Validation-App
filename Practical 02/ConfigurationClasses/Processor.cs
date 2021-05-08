@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace DataValidation.ConfigurationClasses
 {
-    class Processor
+    public class Processor
     {
        public int ID { get; set; }
        public ProcessorType Type { get; set; }

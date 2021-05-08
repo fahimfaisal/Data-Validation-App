@@ -20,7 +20,7 @@ namespace DataValidation
         public Boolean getCffFilename(string taffFilename)
         {
             cffFilename = null;
-            Errors = new List<string>();
+            bool valid = false;
             //open the TAff file and extract the cff
 
             StreamReader sr = new StreamReader(taffFilename);
@@ -44,41 +44,23 @@ namespace DataValidation
                             {
                                 String path = Path.GetDirectoryName(taffFilename);
                                 cffFilename = path + Path.DirectorySeparatorChar +line;
+                                valid = true;
                             }
-                            else
-                            {
-                                Errors.Add("Invalid name");
-                            }
+                          
                         }
-                        else
-                        {
-                            Errors.Add("Invalid filename");
-                        }
+                        
                     }
-                    else
-                    {
-                        Errors.Add("Not supplied");
-                    }
+                   
                 }
             }
             sr.Close();
 
-            if (cffFilename == null)
-            {
-                Errors.Add("Missing Keyword");
-            }
 
-            return (Errors.Count == 0);
+
+            return valid;
 
         }
-        public Boolean Validate(string taffFilename)
-        {
-
-            
-            Errors = new List<string>();
-
-            return (Errors.Count == 0);
-        }
+     
 
         public void GetAllocations(String taffFilename)
         {

@@ -46,14 +46,14 @@ namespace DataValidation
         public Boolean Validate()
         {
 
-            Errors = new List<string>();
-
+            
+            bool found = false;
             StreamReader sr = new StreamReader(cffFilename);
             while (!sr.EndOfStream)
             {
                 String line = sr.ReadLine();
                 line = line.Trim();
-                Logfile = null;
+               
                 if (line.Length == 0)
                 {
 
@@ -76,34 +76,21 @@ namespace DataValidation
                             {
                                 String path = Path.GetDirectoryName(cffFilename);
                                 Logfile = path + Path.DirectorySeparatorChar + line;
+
+                                found = true;
                             }
-                            else
-                            {
-                                Errors.Add("Invalid name");
-                            }
+                          
                         }
-                        else
-                        {
-                            Errors.Add("Invalid filename");
-                        }
+                        
                     }
-                    else
-                    {
-                        Errors.Add("Not supplied");
-                    }
+                   
+                    
                 }
             
             }
             sr.Close();
 
-            
-
-            if (Logfile == null)
-            {
-                Errors.Add("Missing Keyword");
-            }
-
-            return(Errors.Count ==0);
+            return found;
 
 
             
