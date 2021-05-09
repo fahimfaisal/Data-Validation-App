@@ -137,17 +137,35 @@ namespace DataValidation
 
                                     String[] tasks = processors[0].Split(',');
 
+                                   
+
                                     allocation.map = new int[processors.Length, tasks.Length];
 
-                                    for (int i = 0; i < allocation.map.GetLength(0); i++)
-                                    {
-                                        String[] number = processors[i].Split(',');
 
-                                        for (int j = 0; j < allocation.map.GetLength(1); j++)
+
+                                    try
+                                    {
+                                        for (int i = 0; i < allocation.map.GetLength(0); i++)
                                         {
-                                            allocation.map[i, j] = int.Parse(number[j]);
+                                            String[] number = processors[i].Split(',');
+
+
+                                            for (int j = 0; j < allocation.map.GetLength(1); j++)
+                                            {
+
+                                                allocation.map[i, j] = int.Parse(number[j]);
+
+                                              
+
+
+                                            }
                                         }
 
+                                    }
+                                    catch (Exception)
+                                    {
+
+                                        allocation.map = null;
                                     }
 
 
@@ -155,6 +173,51 @@ namespace DataValidation
 
 
                             }
+
+                            if (allocation.map != null)
+                            {
+
+                                List<int[]> activeTasks = new List<int[]>();
+                                int[] active;
+
+                                for (int i = 0; i < allocation.map.GetLength(0); i++)
+                                {
+                                    
+
+                                    for (int j = 0; j < allocation.map.GetLength(1); j++)
+                                    {
+                                        
+                                        if (allocation.map[i,j].Equals(1))
+                                        {
+                                            active = new int[]{ i, j };
+                                            activeTasks.Add(active);
+                                        }
+
+                                      
+                                    }
+
+                                    
+                                }
+
+
+                                var activeTasksArray = activeTasks.ToArray();
+
+                                foreach (int[] element in activeTasksArray)
+                                {
+                                    for (int i = 0; i < activeTasksArray.Length; i++)
+                                    {
+                                        if (element[1] == activeTasksArray[i][1] && element[0] != activeTasksArray[i][0])
+                                        {
+                                            allocation.map = new int[1,1];
+
+                                        }
+                                    }
+
+                                }
+                            }
+
+
+
 
                             allocations.allocations.Add(allocation);
 

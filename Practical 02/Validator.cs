@@ -16,7 +16,8 @@ namespace DataValidation
         //TaskAllocation TaffFile = new TaskAllocation();
 
         //Configuration CffFile;
-
+        
+        
 
         public Validator()
         {
@@ -63,9 +64,11 @@ namespace DataValidation
         public string ValidationAllocations(TaskAllocation TaffFile, Configuration CffFile)
         {
 
-
-
-
+            
+            double progRuntime = 0;
+           
+            CffFile.Program.TryGetValue("DURATION", out progRuntime);
+            string runTime;
             string[] limits;
 
             IDictionary<Allocation, double[]> allocations = new Dictionary<Allocation, double[]>();
@@ -74,11 +77,49 @@ namespace DataValidation
 
             foreach (Allocation allocation in TaffFile.allocations.allocations)
             {
+                List<string> errors;
+                string line = "";
+
+                if (allocation.map == null)
+                {
+                    print += "<p style='color:red'>"+"INVALID MAPPING"+"</p>";
+                }
+                else if(allocation.map.Length == 1)
+                {
+                    
+                    print += "<p style='color:red'>" + "SAME TASK HAS BEEN ASSIGNED TO MULTIPLE PROCESSOR FOR ALLOCATION ID: " + allocation.ID +"</p>";
+                }
+                else
+                {
+                    KeyValuePair<Allocation, double[]> allocationValue = validateAllocation(allocation, CffFile, out limits, out errors);
 
 
-                KeyValuePair<Allocation, double[]> one = validateAllocation(allocation, CffFile, out limits);
 
-                print += "ALLOCATION ID" + "=" + one.Key.ID.ToString() + "," + "&nbsp" + "Runtime" + "=" + String.Format("{0:0.##}", one.Value[int.Parse(Keywords.TOTALTIME)]) + "," + "&nbsp" + "Energy" + "=" + String.Format("{0:0.##}", one.Value[int.Parse(Keywords.TOTALENERGY)])  + "<br>" + PrintAllocationUnits(printAllocationMap(allocation), limits) + "<br><br>";
+                    if (allocationValue.Value[int.Parse(Keywords.TOTALTIME)] > progRuntime)
+                    {
+                        runTime = "<span style='color:red'>" + String.Format("{0:0.##}", allocationValue.Value[int.Parse(Keywords.TOTALTIME)]) + "</span>";
+                        errors.Add("THE ALLOCATION ID: " + allocation.ID + " HAS GREATER RUNTIME THAN PROGRAM RUNTIME");
+                    }
+                    else
+                    {
+                        runTime = String.Format("{0:0.##}", allocationValue.Value[int.Parse(Keywords.TOTALTIME)]);
+                    }
+
+                    if (errors.Count > 0)
+                    {
+                       
+                        foreach (string error in errors)
+                        {
+                            line += "<p style='color:red'>" + error + "</p>";
+                        }
+                    }
+
+
+
+                    print += "ALLOCATION ID" + "=" + allocationValue.Key.ID.ToString() + "," + "&nbsp" + "Runtime" + "=" + runTime + "," + "&nbsp" + "Energy" + "=" + String.Format("{0:0.##}", allocationValue.Value[int.Parse(Keywords.TOTALENERGY)]) + "<br>" + PrintAllocationUnits(printAllocationMap(allocation), limits) + "<br><br>" + line + "<br><br>";
+                }
+
+             
             }
 
             return print;
@@ -86,8 +127,13 @@ namespace DataValidation
 
         }
 
-        public KeyValuePair<Allocation, double[]> validateAllocation(Allocation allocation, Configuration config, out String[] limit)
+        public KeyValuePair<Allocation, double[]> validateAllocation(Allocation allocation, Configuration config, out String[] limit ,out List<string> errors)
         {
+
+           
+
+
+            errors = new List<string>();
             Processor[] sortedProcessor = config.Processors.OrderBy(x => x.ID).ToArray();
 
             Task[] sortedTasks = config.Tasks.OrderBy(x => x.ID).ToArray();
@@ -134,11 +180,24 @@ namespace DataValidation
 
                       
                         
-                        upload = upload > sortedTasks[j].upload ? ram : sortedTasks[j].upload;
-                        
-                        
+                        upload = upload > sortedTasks[j].upload ? upload : sortedTasks[j].upload;
 
-                 
+
+                        if (!sortedProcessor[i].CheckRam(sortedTasks[j]))
+                        {
+                            errors.Add("THE PROCESSOR ID: " + sortedProcessor[i].ID + " OF ALLOCATION ID: " +allocation.ID+ " HAS " + sortedProcessor[i].Ram +" GB RAM BUT REQUIRES " + sortedTasks[j].ram+" GB RAM");
+                        }
+
+                        if (!sortedProcessor[i].CheckDownloadSpeed(sortedTasks[j]))
+                        {
+                            errors.Add("THE PROCESSOR ID " + sortedProcessor[i].ID + " OF ALLOCATION ID: " + allocation.ID + " HAS " + sortedProcessor[i].Download + " Gbps DOWNLOAD SPEED BUT REQUIRES " + sortedTasks[j].download + " Gbps Download speed");
+                        }
+
+                        if (!sortedProcessor[i].CheckUploadSpeed(sortedTasks[j]))
+                        {
+                            errors.Add("THE PROCESSOR ID: " + sortedProcessor[i].ID + " OF ALLOCATION ID: " + allocation.ID + " HAS " + sortedProcessor[i].Upload + " Gbps UPLOAD SPEED BUT REQUIRES " + sortedTasks[j].upload+ " Gbps UPLOAD speed");
+                        }
+
                         time += sortedProcessor[i].CalcTime(sortedTasks[j]);
 
                         energy += sortedProcessor[i].CalcEnergy(sortedTasks[j]);
@@ -156,11 +215,11 @@ namespace DataValidation
                 energies[i] = energy;
 
 
-                String Ram = (ram > sortedProcessor[i].Ram ? "<span style='color:red'>"+ ram+"</span>": ram.ToString() ) + "/" + sortedProcessor[i].Ram;
-                String Upload = (upload > sortedProcessor[i].Upload ? "<span style='color:red'>" + ram + "</span>" : upload.ToString()) + "/" + sortedProcessor[i].Upload;
-                String Download = (dowload > sortedProcessor[i].Download ? "<span style='color:red'>" + ram + "</span>" : dowload.ToString()) + "/" + sortedProcessor[i].Download;
+                String Ram = (ram > sortedProcessor[i].Ram ? "<span style='color:red'>"+ ram +"</span>": ram.ToString() ) + "/" + sortedProcessor[i].Ram + "&nbsp GB";
+                String Upload = (upload > sortedProcessor[i].Upload ? "<span style='color:red'>" + upload + "</span>" : upload.ToString()) + "/" + sortedProcessor[i].Upload + "&nbsp Gbps";
+                String Download = (dowload > sortedProcessor[i].Download ? "<span style='color:red'>" + dowload + "</span>" : dowload.ToString()) + "/" + sortedProcessor[i].Download  + "&nbsp Gbps";
 
-                limit[i] = Ram + " " + Upload + " " + Download;
+                limit[i] = Ram + " &nbsp&nbsp" + Upload + "&nbsp&nbsp" + Download;
 
 
             }
@@ -168,7 +227,7 @@ namespace DataValidation
 
             var activeTasksArray = activeTasks.ToArray();
 
-            foreach (var element in activeTasksArray)
+            foreach (int[] element in activeTasksArray)
             {
                 for (int i = 0; i < activeTasksArray.Length; i++)
                 {

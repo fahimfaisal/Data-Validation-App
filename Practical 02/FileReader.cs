@@ -11,10 +11,15 @@ namespace DataValidation
     
  
     
-    class FileReader
+    public class FileReader
     {
         public string LogFile { get; }
         public string cffFile { get; }
+
+        public FileReader()
+        {
+
+        }
 
         //public bool readTaff(String path, out List<string> Errors)
         //{
@@ -50,34 +55,39 @@ namespace DataValidation
             StreamReader streamReader = new StreamReader(path);
             String data = "";
             Errors = new List<string>();
-           
+            String emptyCheck="^\\s*$";
+            string commentCheck = @"^\s*//\s*.*$";
+            string commentLineCheck = @"^\s*.*\s*//.*$";
+
+
             while (!streamReader.EndOfStream)
             {
                 try
                 {
                     String line = streamReader.ReadLine();
-                   
                     line = line.Trim();
 
-                    if (line.StartsWith("//"))
+                    
+                    if (Regex.Match(line, commentCheck).Success)
                     {
                         data += "<p>" + line + "</p>";
                     }
-                    else if (line.Contains("//") && !line.StartsWith("//"))
+                    else if (Regex.Match(line,commentLineCheck).Success)
                     {
                         data += "<p>" + "<span style='color:red'>" + line + "&nbsp&nbsp&nbsp" + "ERROR : COMMENT AND STATEMENT COMBMINED" + "</span>" + "</p>";
                         Errors.Add("COMBINIG STATEMENT AND COMMENT IS NOT ALLOWED");
                     }
 
-                    else if(line.Length == 0)
+                    else if(Regex.Match(line, emptyCheck).Success)
                     {
-                        data += "<p>" + line + "</p>";
+                        data += line ;
                     }
                     
                     else if (line.StartsWith("CONFIGURATION-DATA"))
                     {
 
                         data += "<p>" + line + "</p>";
+                        bool isFileName = false;
 
                         while (!line.StartsWith("END-CONFIGURATION-DATA"))
                         {
@@ -86,58 +96,73 @@ namespace DataValidation
                             line = line.Trim();
 
 
-                            if (line.StartsWith("//"))
+                            if (Regex.Match(line, commentCheck).Success)
                             {
                                 data += "<p>" + line + "</p>";
                             }
-                            else if (line.Length == 0)
+                            else if (Regex.Match(line, commentLineCheck).Success)
                             {
-                                data += "<p>" + line + "</p>";
+                                data += "<p>" + "<span style='color:red'>" + line + "&nbsp&nbsp&nbsp" + "ERROR : COMMENT AND STATEMENT COMBMINED" + "</span>" + "</p>";
+                                Errors.Add("COMBINIG STATEMENT AND COMMENT IS NOT ALLOWED");
+                            }
+
+                            else if (Regex.Match(line, emptyCheck).Success)
+                            {
+                                data += line;
                             }
                             else if (line.StartsWith("FILENAME"))
                             {
-
-                                string orginalLine = line;
-                                string[] texts = line.Split('=');
-
-                                if (texts.Length.Equals(2))
+                                if (isFileName)
                                 {
-                                    texts[1] = texts[1].Trim();
-
-                                    if (texts[1].StartsWith("\"") && texts[1].EndsWith("\""))
-                                    {
-                                        line = texts[1].Trim('"');
-                                        line = line.Trim();
-
-
-
-                                        if (line.IndexOfAny(Path.GetInvalidFileNameChars()) == -1)
-                                        {
-                                            data += "<p>" + orginalLine + "</p>";
-                                           
-                                        }
-                                        else
-                                        {
-                                            Errors.Add("Invalid name");
-
-                                            data += "<p>"+"<span style='color:red'>" + orginalLine + "&nbsp&nbsp&nbsp" + "ERROR : NO ATTRIBUTE PROVIDED" + "</span>"+"</p>";
-
-                                        }
-                                    }
-
-                                    else
-                                    {
-                                        Errors.Add("FILENAME is not a string");
-
-                                        data += "<p>"+"<span style='color:red'>" + orginalLine + "&nbsp&nbsp&nbsp" + "ERROR : NO ATTRIBUTE PROVIDED" + "</span>" + "</p>";
-                                    }
-
+                                    data += "<p>" + "<span style='color:red'>" + line + "&nbsp&nbsp&nbsp" + "ERROR : NO END-CONFIGURATION STATEMENT FOUND" + "</span>" + "</p>";
+                                    Errors.Add("NO END-CONFIGURATION STATEMENT FOUND");
                                 }
                                 else
                                 {
-                                    Errors.Add("FILENAME NOT PROVIDED");
+                                    string orginalLine = line;
+                                    string[] texts = line.Split('=');
+
+                                    if (texts.Length.Equals(2))
+                                    {
+                                        texts[1] = texts[1].Trim();
+
+                                        if (texts[1].StartsWith("\"") && texts[1].EndsWith("\""))
+                                        {
+                                            line = texts[1].Trim('"');
+                                            line = line.Trim();
+
+
+
+                                            if (line.IndexOfAny(Path.GetInvalidFileNameChars()) == -1)
+                                            {
+                                                data += "<p>" + orginalLine + "</p>";
+
+                                            }
+                                            else
+                                            {
+                                                Errors.Add("Invalid name");
+
+                                                data += "<p>" + "<span style='color:red'>" + orginalLine + "&nbsp&nbsp&nbsp" + "ERROR : NO ATTRIBUTE PROVIDED" + "</span>" + "</p>";
+
+                                            }
+                                        }
+
+                                        else
+                                        {
+                                            Errors.Add("FILENAME is not a string");
+
+                                            data += "<p>" + "<span style='color:red'>" + orginalLine + "&nbsp&nbsp&nbsp" + "ERROR : NO ATTRIBUTE PROVIDED" + "</span>" + "</p>";
+                                        }
+
+                                    }
+                                    else
+                                    {
+                                        Errors.Add("FILENAME NOT PROVIDED");
+                                    }
+
+                                    isFileName = true;
                                 }
-                                
+                               
                             }
                             else if (line.StartsWith("END-CONFIGURATION-DATA"))
                             {
@@ -156,6 +181,10 @@ namespace DataValidation
                     {
 
                         data += "<p>" + line + "</p>";
+                        bool isCount = false;
+                        bool isTask = false;
+                        bool isProcessor = false;
+
 
                         while (!line.StartsWith("END-ALLOCATIONS"))
                         {
@@ -163,52 +192,89 @@ namespace DataValidation
                             line = line.Trim();
 
 
-                            if (line.StartsWith("//"))
+
+                            if (Regex.Match(line, commentCheck).Success)
                             {
                                 data += "<p>" + line + "</p>";
                             }
-                            else if (line.Length == 0)
+                            else if (Regex.Match(line, commentLineCheck).Success)
                             {
-                                
+                                data += "<p>" + "<span style='color:red'>" + line + "&nbsp&nbsp&nbsp" + "ERROR : COMMENT AND STATEMENT COMBMINED" + "</span>" + "</p>";
+                                Errors.Add("COMBINIG STATEMENT AND COMMENT IS NOT ALLOWED");
+                            }
+
+                            else if (Regex.Match(line, emptyCheck).Success)
+                            {
+                                data += line;
                             }
                             else if (line.StartsWith("COUNT"))
                             {
-                                
-
-                                string[] lineError = ValidateInt(line, "COUNT");
-
-                                data += lineError[0];
-                                if(!lineError[1].Equals("empty"))
+                                if (isCount)
                                 {
-                                    Errors.Add(lineError[1]);
+                                    data += "<p>" + "<span style='color:red'>" + line + "&nbsp&nbsp&nbsp" + "ERROR : NO END-ALLOCATIONS FOUND" + "</span>" + "</p>";
+                                    Errors.Add("END-ALLOCATIONS FOUND");
                                 }
+                                else
+                                {
+                                    string[] lineError = ValidateInt(line, "COUNT");
 
+                                    data += lineError[0];
+                                    if (!lineError[1].Equals("empty"))
+                                    {
+                                        Errors.Add(lineError[1]);
+                                    }
+
+                                    isCount = true;
+                                }
+                             
 
                             }
                             else if (line.StartsWith("TASKS"))
                             {
-
-
-                               string[] lineError = ValidateInt(line, "TASKS");
-
-                                data += lineError[0];
-                                if (!lineError[1].Equals("empty"))
+                                if (isTask)
                                 {
-                                    Errors.Add(lineError[1]);
+                                    data += "<p>" + "<span style='color:red'>" + line + "&nbsp&nbsp&nbsp" + "ERROR : NO END-ALLOCATIONS FOUND" + "</span>" + "</p>";
+                                    Errors.Add("END-ALLOCATIONS FOUND");
+                                }
+                                else
+                                {
+                                    string[] lineError = ValidateInt(line, "TASKS");
+
+                                    data += lineError[0];
+                                    if (!lineError[1].Equals("empty"))
+                                    {
+                                        Errors.Add(lineError[1]);
+                                    }
+
+                                    isTask = true;
                                 }
 
+                              
 
                             }
                             else if (line.StartsWith("PROCESSORS"))
                             {
-                                string[] lineError = ValidateInt(line, "PROCESSORS");
 
-                                data += lineError[0];
-                                if (!lineError[1].Equals("empty"))
+
+                                if (isProcessor)
                                 {
-                                    Errors.Add(lineError[1]);
+                                    data += "<p>" + "<span style='color:red'>" + line + "&nbsp&nbsp&nbsp" + "ERROR : NO END-ALLOCATIONS FOUND" + "</span>" + "</p>";
+                                    Errors.Add("END-ALLOCATIONS FOUND");
+                                }
+                                else
+                                {
+                                    string[] lineError = ValidateInt(line, "PROCESSORS");
+
+                                    data += lineError[0];
+                                    if (!lineError[1].Equals("empty"))
+                                    {
+                                        Errors.Add(lineError[1]);
+                                    }
+
+                                    isProcessor = true;
                                 }
 
+                               
                             }
                             else if (line.StartsWith("END-ALLOCATIONS"))
                             {
@@ -229,9 +295,9 @@ namespace DataValidation
                                         data += "<p>" + line + "</p>";
                                     }
 
-                                    else if (line.Length == 0)
+                                    else if (Regex.Match("^s*$",line).Success)
                                     {
-                                        data += "<p>" + line + "</p>";
+                                        data +=   line ;
                                     }
                                     else if (line.StartsWith("ID"))
                                     {
@@ -296,7 +362,7 @@ namespace DataValidation
                                     }
                                     else
                                     {
-                                        Errors.Add("Invalid line");
+                                        Errors.Add("INVALID LINE");
                                         data += "<p>"+"<span style='color:red'>" + line + "&nbsp&nbsp&nbsp" + "ERROR : NO ATTRIBUTE PROVIDED" + "</span>"+"</p>";
                                     }
                                 }
@@ -319,6 +385,7 @@ namespace DataValidation
                     else
                     {
                         data += "<p>" + "<span style='color:red'>" + line + "&nbsp&nbsp&nbsp" + "ERROR : INVALID LINE PROVIDED" + "</span>" + "</p>";
+                        Errors.Add("Inavlid line");
                     }
 
                 }
@@ -332,6 +399,12 @@ namespace DataValidation
             }
             streamReader.Close();
 
+            if (data.Length == 0)
+            {
+                Errors.Add("THE FILE IS EMPTY");
+            }
+
+            
             return data;
         }
 
@@ -340,6 +413,10 @@ namespace DataValidation
             StreamReader streamReader = new StreamReader(path);
             String data = "";
             Errors = new List<string>();
+            String emptyCheck = "^\\s*$";
+            string commentCheck = @"^\s*//\s*.*$";
+            string commentLineCheck = @"^\s*.*\s*//.*$";
+
             while (!streamReader.EndOfStream)
             {
                 try
@@ -348,18 +425,19 @@ namespace DataValidation
                     line = line.Trim();
 
 
-                    if (line.StartsWith("//"))
+                    if (Regex.Match(line, commentCheck).Success)
                     {
                         data += "<p>" + line + "</p>";
                     }
-                    else if (line.Length == 0)
-                    {
-
-                    }
-                    else if (line.Contains("//") && !line.StartsWith("//"))
+                    else if (Regex.Match(line, commentLineCheck).Success)
                     {
                         data += "<p>" + "<span style='color:red'>" + line + "&nbsp&nbsp&nbsp" + "ERROR : COMMENT AND STATEMENT COMBMINED" + "</span>" + "</p>";
                         Errors.Add("COMBINIG STATEMENT AND COMMENT IS NOT ALLOWED");
+                    }
+
+                    else if (Regex.Match(line, emptyCheck).Success)
+                    {
+                        data += line;
                     }
 
                     else if (line.StartsWith("LOGFILE"))
@@ -370,14 +448,21 @@ namespace DataValidation
                         {
                             line = streamReader.ReadLine();
                             line = line.Trim();
-                            
-                            if (line.StartsWith("//"))
+
+
+                            if (Regex.Match(line, commentCheck).Success)
                             {
                                 data += "<p>" + line + "</p>";
                             }
-                            else if (line.Length == 0)
+                            else if (Regex.Match(line, commentLineCheck).Success)
                             {
+                                data += "<p>" + "<span style='color:red'>" + line + "&nbsp&nbsp&nbsp" + "ERROR : COMMENT AND STATEMENT COMBMINED" + "</span>" + "</p>";
+                                Errors.Add("COMBINIG STATEMENT AND COMMENT IS NOT ALLOWED");
+                            }
 
+                            else if (Regex.Match(line, emptyCheck).Success)
+                            {
+                                data += line;
                             }
                             if (line.StartsWith("DEFAULT"))
                             {
@@ -441,13 +526,19 @@ namespace DataValidation
                             line = streamReader.ReadLine();
                             line = line.Trim();
 
-                            if (line.StartsWith("//"))
+                            if (Regex.Match(line, commentCheck).Success)
                             {
                                 data += "<p>" + line + "</p>";
                             }
-                            else if (line.Length == 0)
+                            else if (Regex.Match(line, commentLineCheck).Success)
                             {
+                                data += "<p>" + "<span style='color:red'>" + line + "&nbsp&nbsp&nbsp" + "ERROR : COMMENT AND STATEMENT COMBMINED" + "</span>" + "</p>";
+                                Errors.Add("COMBINIG STATEMENT AND COMMENT IS NOT ALLOWED");
+                            }
 
+                            else if (Regex.Match(line, emptyCheck).Success)
+                            {
+                                data += line;
                             }
                             if (line.StartsWith("MINIMUM-TASKS"))
                             {
@@ -599,13 +690,19 @@ namespace DataValidation
                             line = streamReader.ReadLine();
                             line = line.Trim();
 
-                            if (line.StartsWith("//"))
+                            if (Regex.Match(line, commentCheck).Success)
                             {
                                 data += "<p>" + line + "</p>";
                             }
-                            else if (line.Length == 0)
+                            else if (Regex.Match(line, commentLineCheck).Success)
                             {
+                                data += "<p>" + "<span style='color:red'>" + line + "&nbsp&nbsp&nbsp" + "ERROR : COMMENT AND STATEMENT COMBMINED" + "</span>" + "</p>";
+                                Errors.Add("COMBINIG STATEMENT AND COMMENT IS NOT ALLOWED");
+                            }
 
+                            else if (Regex.Match(line, emptyCheck).Success)
+                            {
+                                data += line;
                             }
                             else if (line.StartsWith("DURATION"))
                             {
@@ -663,13 +760,19 @@ namespace DataValidation
                             line = streamReader.ReadLine();
                             line = line.Trim();
 
-                            if (line.StartsWith("//"))
+                            if (Regex.Match(line, commentCheck).Success)
                             {
                                 data += "<p>" + line + "</p>";
                             }
-                            else if (line.Length == 0)
+                            else if (Regex.Match(line, commentLineCheck).Success)
                             {
+                                data += "<p>" + "<span style='color:red'>" + line + "&nbsp&nbsp&nbsp" + "ERROR : COMMENT AND STATEMENT COMBMINED" + "</span>" + "</p>";
+                                Errors.Add("COMBINIG STATEMENT AND COMMENT IS NOT ALLOWED");
+                            }
 
+                            else if (Regex.Match(line, emptyCheck).Success)
+                            {
+                                data += line;
                             }
                             else if (line.StartsWith("TASK"))
                             {
@@ -681,13 +784,19 @@ namespace DataValidation
                                     line = line.Trim();
 
 
-                                    if (line.StartsWith("//"))
+                                    if (Regex.Match(line, commentCheck).Success)
                                     {
                                         data += "<p>" + line + "</p>";
                                     }
-                                    else if (line.Length == 0)
+                                    else if (Regex.Match(line, commentLineCheck).Success)
                                     {
+                                        data += "<p>" + "<span style='color:red'>" + line + "&nbsp&nbsp&nbsp" + "ERROR : COMMENT AND STATEMENT COMBMINED" + "</span>" + "</p>";
+                                        Errors.Add("COMBINIG STATEMENT AND COMMENT IS NOT ALLOWED");
+                                    }
 
+                                    else if (Regex.Match(line, emptyCheck).Success)
+                                    {
+                                        data += line;
                                     }
                                     else if (line.StartsWith("ID"))
                                     {
@@ -785,13 +894,20 @@ namespace DataValidation
                             line = streamReader.ReadLine();
                             line = line.Trim();
 
-                            if (line.StartsWith("//"))
+
+                            if (Regex.Match(line, commentCheck).Success)
                             {
                                 data += "<p>" + line + "</p>";
                             }
-                            else if (line.Length == 0)
+                            else if (Regex.Match(line, commentLineCheck).Success)
                             {
+                                data += "<p>" + "<span style='color:red'>" + line + "&nbsp&nbsp&nbsp" + "ERROR : COMMENT AND STATEMENT COMBMINED" + "</span>" + "</p>";
+                                Errors.Add("COMBINIG STATEMENT AND COMMENT IS NOT ALLOWED");
+                            }
 
+                            else if (Regex.Match(line, emptyCheck).Success)
+                            {
+                                data += line;
                             }
                             else if (line.StartsWith("PROCESSOR"))
                             {
@@ -807,9 +923,9 @@ namespace DataValidation
                                     {
                                         data += "<p>" + line + "</p>";
                                     }
-                                    else if (line.Length == 0)
+                                    else if (Regex.Match("^\\s*$", line).Success)
                                     {
-
+                                        data += line;
                                     }
                                     else if (line.StartsWith("ID"))
                                     {
@@ -911,13 +1027,20 @@ namespace DataValidation
                             line = line.Trim();
 
 
-                            if (line.StartsWith("//"))
+
+                            if (Regex.Match(line, commentCheck).Success)
                             {
                                 data += "<p>" + line + "</p>";
                             }
-                            else if (line.Length == 0)
+                            else if (Regex.Match(line, commentLineCheck).Success)
                             {
+                                data += "<p>" + "<span style='color:red'>" + line + "&nbsp&nbsp&nbsp" + "ERROR : COMMENT AND STATEMENT COMBMINED" + "</span>" + "</p>";
+                                Errors.Add("COMBINIG STATEMENT AND COMMENT IS NOT ALLOWED");
+                            }
 
+                            else if (Regex.Match(line, emptyCheck).Success)
+                            {
+                                data += line;
                             }
                             else if (line.StartsWith("END-PROCESSOR-TYPES"))
                             {
@@ -934,14 +1057,14 @@ namespace DataValidation
                                     line = streamReader.ReadLine();
                                     line = line.Trim();
 
-                                    if (line.StartsWith("\\"))
+                                    if (Regex.Match(line, commentCheck).Success)
                                     {
                                         data += "<p>" + line + "</p>";
                                     }
-
-                                    else if (line.Length == 0)
+                                    else if (Regex.Match(line, commentLineCheck).Success)
                                     {
-                                        data += "<p>" + line + "</p>";
+                                        data += "<p>" + "<span style='color:red'>" + line + "&nbsp&nbsp&nbsp" + "ERROR : COMMENT AND STATEMENT COMBMINED" + "</span>" + "</p>";
+                                        Errors.Add("COMBINIG STATEMENT AND COMMENT IS NOT ALLOWED");
                                     }
                                     else if (line.StartsWith("NAME"))
                                     {
@@ -958,10 +1081,6 @@ namespace DataValidation
                                     else if (line.StartsWith("C2"))
                                     {
 
-
-
-
-
                                         string[] lineError = ValidateDouble(line, "C2");
 
                                         data += lineError[0];
@@ -969,9 +1088,6 @@ namespace DataValidation
                                         {
                                             Errors.Add(lineError[1]);
                                         }
-
-
-
 
                                     }
                                     else if (line.StartsWith("C1"))
@@ -1022,14 +1138,19 @@ namespace DataValidation
                             line = streamReader.ReadLine();
                             line = line.Trim();
 
-                            if (line.StartsWith("\\"))
+                            if (Regex.Match(line, commentCheck).Success)
                             {
                                 data += "<p>" + line + "</p>";
                             }
-
-                            else if (line.Length == 0)
+                            else if (Regex.Match(line, commentLineCheck).Success)
                             {
-                                data += "<p>" + line + "</p>";
+                                data += "<p>" + "<span style='color:red'>" + line + "&nbsp&nbsp&nbsp" + "ERROR : COMMENT AND STATEMENT COMBMINED" + "</span>" + "</p>";
+                                Errors.Add("COMBINIG STATEMENT AND COMMENT IS NOT ALLOWED");
+                            }
+
+                            else if (Regex.Match(line, emptyCheck).Success)
+                            {
+                                data += line;
                             }
                             else if (line.StartsWith("MAP"))
                             {
@@ -1089,14 +1210,20 @@ namespace DataValidation
                             line = streamReader.ReadLine();
                             line = line.Trim();
 
-                            if (line.StartsWith("\\"))
+
+                            if (Regex.Match(line, commentCheck).Success)
                             {
                                 data += "<p>" + line + "</p>";
                             }
-
-                            else if (line.Length == 0)
+                            else if (Regex.Match(line, commentLineCheck).Success)
                             {
-                                data += "<p>" + line + "</p>";
+                                data += "<p>" + "<span style='color:red'>" + line + "&nbsp&nbsp&nbsp" + "ERROR : COMMENT AND STATEMENT COMBMINED" + "</span>" + "</p>";
+                                Errors.Add("COMBINIG STATEMENT AND COMMENT IS NOT ALLOWED");
+                            }
+
+                            else if (Regex.Match(line, emptyCheck).Success)
+                            {
+                                data += line;
                             }
                             else if (line.StartsWith("MAP"))
                             {
@@ -1137,18 +1264,20 @@ namespace DataValidation
 
                             else
                             {
-                                Errors.Add("Invalid line");
+                                Errors.Add("INVALID LINE");
                                 data += "<p>" + "<span style='color:red'>" + line + "&nbsp&nbsp&nbsp" + "ERROR : NO END-REMOTE-COMMUNICATION FOUND" + "</span>" + "</p>";
                             }
                         }
                     }
                     else
                     {
-                        data += "<p>" +line + "</p>";
+                        data += "<p>" + "<span style='color:red'>" + line + "&nbsp&nbsp&nbsp" + "ERROR : INVALID LINE PROVIDED" + "</span>" + "</p>";
+                        Errors.Add("INVALID LINE");
                     }
-
-
                 }
+
+
+                
                 catch (Exception e)
                 {
                     return data;
@@ -1156,6 +1285,11 @@ namespace DataValidation
 
             }
             streamReader.Close();
+
+            if (data.Length == 0)
+            {
+                Errors.Add("THE FILE IS EMPTY");
+            }
 
             return data;
         }
@@ -1181,9 +1315,11 @@ namespace DataValidation
                 string error = "";
                 int count = 0;
                 string orginalLine = line;
+                string zeroCheck = @"^.*=\s*0+$";
+                string commentLineCheck = @"^\s*.*\s*//.*$";
                 string[] texts = line.Split('=');
 
-                if (orginalLine.Contains("//") && !orginalLine.StartsWith("//"))
+                if (Regex.Match(orginalLine, commentLineCheck).Success)
                 {
                     line = "<p>" + "<span style='color:red'>" + orginalLine + "&nbsp&nbsp&nbsp" + "ERROR : MIXING STATEMENT AND COMMENT IS NOT ALLOWED" + "</span>" + "</p>";
                     error = "COMMENT AND STATEMENT IS MIXED IN: " + section;
@@ -1192,6 +1328,14 @@ namespace DataValidation
 
 
                 }
+                else if(Regex.Match(orginalLine, zeroCheck).Success && !orginalLine.StartsWith("ID"))
+                {
+                    line = "<p>" + "<span style='color:red'>" + orginalLine + "&nbsp&nbsp&nbsp" + "ERROR : VALUE CANNOT BE 0" + "</span>" + "</p>";
+                    error = "COMMENT AND STATEMENT IS MIXED IN: " + section;
+                    dataError[0] = line;
+                    dataError[1] = error;
+                }
+
                 else if (texts.Length.Equals(2))
                 {
                     if (!texts[0].Equals(section))
@@ -1219,7 +1363,7 @@ namespace DataValidation
                         line = "<p>" + "<span style='color:red'>" + orginalLine + "&nbsp&nbsp&nbsp" + "ERROR :" + section + " SHOULD BE AN INTEGER" + "</span>" + "</p>";
 
                         dataError[0] = line;
-                        dataError[1] = section + "IS NOT AN INTEGER";
+                        dataError[1] = section + " IS NOT AN INTEGER";
 
 
 
@@ -1245,9 +1389,11 @@ namespace DataValidation
                 string error = "";
                 double count;
                 string orginalLine = line;
+                string zeroCheck = @"^.*=\s*0+$";
+                string commentLineCheck = @"^\s*.*\s*//.*$";
                 string[] texts = line.Split('=');
 
-                if (orginalLine.Contains("//") && !orginalLine.StartsWith("//"))
+                if (Regex.Match(orginalLine, commentLineCheck).Success)
                 {
                     line = "<p>" + "<span style='color:red'>" + orginalLine + "&nbsp&nbsp&nbsp" + "ERROR : MIXING STATEMENT AND COMMENT IS NOT ALLOWED" + "</span>" + "</p>";
                     error = "COMMENT AND STATEMENT IS MIXED IN: " + section;
@@ -1256,11 +1402,18 @@ namespace DataValidation
 
 
                 }
+                else if (Regex.Match(orginalLine, zeroCheck).Success)
+                {
+                    line = "<p>" + "<span style='color:red'>" + orginalLine + "&nbsp&nbsp&nbsp" + "ERROR : VALUE CANNOT BE 0" + "</span>" + "</p>";
+                    error = "COMMENT AND STATEMENT IS MIXED IN: " + section;
+                    dataError[0] = line;
+                    dataError[1] = error;
+                }
                 else if (texts.Length.Equals(2))
                 {
                     if (!texts[0].Equals(section))
                     {
-                        line = "<p>" + "<span style='color:red'>" + orginalLine + "&nbsp&nbsp&nbsp" + "ERROR : INVALID" + "ATTRIBUTE" + "NAME" + section + "</span>" + "</p>";
+                        line = "<p>" + "<span style='color:red'>" + orginalLine + "&nbsp&nbsp&nbsp" + " ERROR : INVALID" + "ATTRIBUTE " + " NAME " + section + "</span>" + "</p>";
                         error = "INAVLID ATTRIBUTE NAME: " + section;
 
                         dataError[0] = line;
@@ -1280,7 +1433,7 @@ namespace DataValidation
                     }
                     else
                     {
-                        line = "<p>" + "<span style='color:red'>" + orginalLine + "&nbsp&nbsp&nbsp" + "ERROR :" + section + " SHOULD BE AN NUMBER" + "</span>" + "</p>";
+                        line = "<p>" + "<span style='color:red'>" + orginalLine + "&nbsp&nbsp&nbsp" + " ERROR : " + section + " SHOULD BE AN NUMBER" + "</span>" + "</p>";
 
                         dataError[0] = line;
                         dataError[1] = section + "IS NOT AN INTEGER";
@@ -1313,11 +1466,12 @@ namespace DataValidation
             string error = "";
             int count = 0;
             string orginalLine = line;
+            string commentLineCheck = @"^\s*.*\s*//.*$";
             string[] texts = line.Split('=');
-            string pattern = "[^0-9]";
-            
+            string pattern = @"^" + '"' +".+" +'"' + "$";
 
-            if (orginalLine.Contains("//") && !orginalLine.StartsWith("//"))
+
+            if (Regex.Match(orginalLine, commentLineCheck).Success)
             {
                 line = "<p>" + "<span style='color:red'>" + orginalLine + "&nbsp&nbsp&nbsp" + "ERROR : MIXING STATEMENT AND COMMENT IS NOT ALLOWED" + "</span>" + "</p>";
                 error = "COMMENT AND STATEMENT IS MIXED IN: " + section;
@@ -1338,34 +1492,21 @@ namespace DataValidation
 
 
                 }
-                else if (!texts[1].StartsWith("\"") && !texts[1].EndsWith("\""))
+                else if (Regex.Match(texts[1],pattern).Success)
                 {
 
-                    line = "<p>" + "<span style='color:red'>" + orginalLine + "&nbsp&nbsp&nbsp" + "ERROR :  IS NOT A STRING" + "</span>" + "</p>";
+                    line = "<p>" + orginalLine + "</p>";
                     dataError[0] = line;
-                    dataError[1] = "NOT A STRING" + section;
+                    dataError[1] = "empty";
+                   
 
 
                 }
                 else
                 {
-                    String strings = texts[1].Trim('"');
-                    
-                    Match m = Regex.Match(pattern, strings);
-                    if (!m.Success)
-                    {
-                        line = "<p>" + orginalLine + "</p>";
-                        dataError[0] = line;
-                        dataError[1] = "empty";
-                    }
-                    else
-                    {
-
-                        line = "<p>" + "<span style='color:red'>" + orginalLine + "&nbsp&nbsp&nbsp" + "ERROR :  IS NOT A STRING" + "</span>" + "</p>";
-                        dataError[0] = line;
-                        dataError[1] = "NOT A STRING" + section;
-
-                    }
+                    line = "<p>" + "<span style='color:red'>" + orginalLine + "&nbsp&nbsp&nbsp" + "ERROR :  IS NOT A STRING" + "</span>" + "</p>";
+                    dataError[0] = line;
+                    dataError[1] = "NOT A STRING" + section;
 
 
                 }
@@ -1374,7 +1515,7 @@ namespace DataValidation
             }
             else
             {
-                line = "<p>" + "<span style='color:red'>" + orginalLine + "&nbsp&nbsp&nbsp" + "ERROR :  MISSING ASSIGNMENT SYMBOL" + "</span>" + "</p>";
+                line = "<p>" + "<span style='color:red'>" + orginalLine + "&nbsp&nbsp&nbsp" + " ERROR :  MISSING ASSIGNMENT SYMBOL" + "</span>" + "</p>";
                 dataError[0] = line;
                 dataError[1] = "NO ASSIGMENT SYMBOL FOUND OF" + section;
             }
@@ -1387,16 +1528,17 @@ namespace DataValidation
             string error = "";
             string pattern;
             string orginalLine = line;
+            string commentLineCheck = @"^\s*.*\s*//.*$";
             string[] texts = line.Split('=');
                
             if (file == "taff")
             {
-                pattern = "^s*MAP=(0|1)(,0|,1)*(;(0|1)(,0|,1)*)*$";
+                pattern = "^\\s*MAP\\s*=(0|1)(,0|,1)*(;(0|1)(,0|,1)*)*$";
                 
             }
-            else
+            else 
             {
-                pattern ="^s*MAP=(d|d.d*)(,d|,d*.d*)*(;(d|d.d*)(,d|,d*.d*)*)*$";
+                pattern = @"^\s*MAP\s*=\s*(\d|\d.\d*)(,\d|,\d.\d*)*(;(\d|\d.\d*)(,\d|,\d.\d*)*)*$";
 
             }
 
@@ -1404,9 +1546,12 @@ namespace DataValidation
 
 
             Match m = Regex.Match(orginalLine, pattern);
-            if (orginalLine.Contains("//") && !orginalLine.StartsWith("//"))
+
+
+
+            if (Regex.Match(orginalLine, commentLineCheck).Success)
             {
-                line = "<p>" + "<span style='color:red'>" + orginalLine + "&nbsp&nbsp&nbsp" + "ERROR : MIXING STATEMENT AND COMMENT IS NOT ALLOWED" + "</span>" + "</p>";
+                line = "<p>" + "<span style='color:red'>" + orginalLine + "&nbsp&nbsp&nbsp" + " ERROR : MIXING STATEMENT AND COMMENT IS NOT ALLOWED" + "</span>" + "</p>";
                 error = "COMMENT AND STATEMENT IS MIXED IN: " + section;
                 dataError[0] = line;
                 dataError[1] = error;
@@ -1417,7 +1562,7 @@ namespace DataValidation
             {
                 if (!texts[0].Equals(section))
                 {
-                    line = "<p>" + "<span style='color:red'>" + orginalLine + "&nbsp&nbsp&nbsp" + "ERROR : INVALID" + "ATTRIBUTE" + "NAME" + section + "</span>" + "</p>";
+                    line = "<p>" + "<span style='color:red'>" + orginalLine + "&nbsp&nbsp&nbsp" + " ERROR : INVALID" + "ATTRIBUTE" + "NAME" + section + "</span>" + "</p>";
                     error = "INAVLID ATTRIBUTE NAME: " + section;
 
                     dataError[0] = line;

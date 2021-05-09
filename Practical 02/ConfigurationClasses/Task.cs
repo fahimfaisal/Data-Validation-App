@@ -9,7 +9,7 @@ namespace DataValidation.ConfigurationClasses
     public class Task
     {
         public int ID { get; set; }
-        public double runtime { get; set; }
+        public double Runtime { get; set; }
         public double referenceFrequency { get; set; }
         public int ram { get; set; }
         public int download { get; set; }
@@ -23,7 +23,7 @@ namespace DataValidation.ConfigurationClasses
         public Task(int Id, Double runtime, Double referenceFrequency, int ram, int download, int upload)
         {
             this.ID = Id;
-            this.runtime = runtime;
+            this.Runtime = runtime;
             this.referenceFrequency = referenceFrequency;
             this.ram = ram;
             this.download = download;

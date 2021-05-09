@@ -34,7 +34,7 @@ namespace DataValidation.ConfigurationClasses
         public double CalcTime(Task task)
         {
 
-            double val = task.runtime * (task.referenceFrequency / Frequency);
+            double val = task.Runtime * (task.referenceFrequency / Frequency);
 
             return val;
 

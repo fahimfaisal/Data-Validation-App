@@ -15,7 +15,8 @@ namespace DataValidation
         public string cffFilename;
 
         public string Logfile { get; set; }
-        List<string> Errors { get; set; }
+        
+        public List<string> Errors = new List<string>(); 
 
         public List<Processor> Processors { get; set; }
 
@@ -31,7 +32,7 @@ namespace DataValidation
 
         IDictionary<String, Double> Limits { get; set; }
 
-        IDictionary<String, Double> Program { get; set; }
+        public IDictionary<String, Double> Program { get; set; }
 
 
 
@@ -97,14 +98,24 @@ namespace DataValidation
 
         }
 
+        public void GetConfigurations()
+        {
+            GetLimit();
+            GetProgram();
+            GetTasks();
+            GetProcessors();
+            GetLocalCommunication();
+            GetRemoteCommunication();
+                
+        }
+      
 
         public void GetTasks()
         {
 
-          
-            
-            
+
             StreamReader sr = new StreamReader(cffFilename);
+
 
             while (!sr.EndOfStream)
             {
@@ -139,9 +150,13 @@ namespace DataValidation
 
                                 if (line.StartsWith("RUNTIME"))
                                 {
+
                                     String[] data = line.Split('=');
 
-                                    task.runtime = double.Parse(data[1]);
+                                    task.Runtime = double.Parse(data[1]);
+                                    
+                                    
+                                   
 
                                 }
 
@@ -158,21 +173,52 @@ namespace DataValidation
 
                                 if (line.StartsWith("RAM"))
                                 {
+
+
                                     String[] data = line.Split('=');
+                                    double minimumRam;
+                                    double maximumRam;
 
                                     task.ram = int.Parse(data[1]);
 
+                                    bool minimum = Limits.TryGetValue("MINIMUM-RAM", out minimumRam);
 
+                                    bool maximum = Limits.TryGetValue("MAXIMUM-RAM", out maximumRam);
+
+                                    if (minimum && maximum)
+                                    {
+                                        if (double.Parse(data[1]) < minimumRam || double.Parse(data[1]) > maximumRam)
+                                        {
+                                            Errors.Add("RAM OF TASK " + "ID : " + task.ID+ "IS NOT IN RANGE ");
+                                        }
+                                    }
 
 
                                 }
 
                                 if (line.StartsWith("DOWNLOAD"))
                                 {
-                                    String[] data = line.Split('=');
+                                  
 
+                                   
+
+                                    String[] data = line.Split('=');
+                                    double minimumDownload;
+                                    double maximumDownload;
+                                    
                                     task.download = int.Parse(data[1]);
 
+                                    bool minimum = Limits.TryGetValue("MINIMUM-DOWNLOAD", out minimumDownload);
+
+                                    bool maximum = Limits.TryGetValue("MAXIMUM-DOWNLOAD", out maximumDownload);
+
+                                    if (minimum && maximum)
+                                    {
+                                        if (double.Parse(data[1]) < minimumDownload || double.Parse(data[1]) > maximumDownload)
+                                        {
+                                            Errors.Add("DOWNLOAD SPEED OF TASK " + "ID : " + task.ID + "IS NOT IN RANGE ");
+                                        }
+                                    }
 
 
 
@@ -180,10 +226,24 @@ namespace DataValidation
 
                                 if (line.StartsWith("UPLOAD"))
                                 {
+                                   
                                     String[] data = line.Split('=');
+                                    double minimumUpload;
+                                    double maximumUpload;
 
                                     task.upload = int.Parse(data[1]);
 
+                                    bool minimum = Limits.TryGetValue("MINIMUM-UPLOAD", out minimumUpload);
+
+                                    bool maximum = Limits.TryGetValue("MAXIMUM-UPLOAD", out maximumUpload);
+
+                                    if (minimum && maximum)
+                                    {
+                                        if (double.Parse(data[1]) < minimumUpload || double.Parse(data[1]) > maximumUpload)
+                                        {
+                                            Errors.Add("UPLOAD SPEED OF TASK " + "ID : " + task.ID + "IS NOT IN RANGE ");
+                                        }
+                                    }
 
 
 
@@ -256,7 +316,9 @@ namespace DataValidation
                                         if (data[1].Trim().Trim('"').Equals(processorType.Name))
                                         {
                                             processor.Type = processorType;
+
                                         }
+                                        
                                     }
                                         
                                 }
@@ -272,23 +334,73 @@ namespace DataValidation
 
                                 if (line.StartsWith("RAM"))
                                 {
+
                                     String[] data = line.Split('=');
+                                    double minimumRam;
+                                    double maximumRam;
 
                                     processor.Ram = int.Parse(data[1]);
+
+                                    bool minimum = Limits.TryGetValue("MINIMUM-RAM", out minimumRam);
+
+                                    bool maximum = Limits.TryGetValue("MAXIMUM-RAM", out maximumRam);
+
+                                    if (minimum && maximum)
+                                    {
+                                        if (double.Parse(data[1]) < minimumRam || double.Parse(data[1]) > maximumRam)
+                                        {
+                                            Errors.Add("RAM OF PROCESSOR " + "ID : " + processor.ID + "IS NOT IN RANGE ");
+                                        }
+                                    }
+
+
+                                    
                                 }
 
                                 if (line.StartsWith("DOWNLOAD"))
                                 {
                                     String[] data = line.Split('=');
+                                    double minimumDownload;
+                                    double maximumDownload;
 
                                     processor.Download = int.Parse(data[1]);
+
+                                    bool minimum = Limits.TryGetValue("MINIMUM-DOWNLOAD", out minimumDownload);
+
+                                    bool maximum = Limits.TryGetValue("MAXIMUM-DOWNLOAD", out maximumDownload);
+
+                                    if (minimum && maximum)
+                                    {
+                                        if (double.Parse(data[1]) < minimumDownload || double.Parse(data[1]) > maximumDownload)
+                                        {
+                                            Errors.Add("DOWNLOAD SPEED OF PROCESSOR " + "ID : " + processor.ID + "IS NOT IN RANGE ");
+                                        }
+                                    }
+
+                                    
                                 }
 
                                 if (line.StartsWith("UPLOAD"))
                                 {
                                     String[] data = line.Split('=');
+                                    double minimumUpload;
+                                    double maximumUpload;
 
                                     processor.Upload = int.Parse(data[1]);
+
+                                    bool minimum = Limits.TryGetValue("MINIMUM-UPLOAD", out minimumUpload);
+
+                                    bool maximum = Limits.TryGetValue("MAXIMUM-UPLOAD", out maximumUpload);
+
+                                    if (minimum && maximum)
+                                    {
+                                        if (double.Parse(data[1]) < minimumUpload || double.Parse(data[1]) > maximumUpload)
+                                        {
+                                            Errors.Add("UPLOAD SPEED OF PROCESSOR " + "ID : " + processor.ID + "IS NOT IN RANGE ");
+                                        }
+                                    }
+
+                                   
                                 }
 
 
@@ -407,11 +519,24 @@ namespace DataValidation
 
                                 for (int j = 0; j < LocalCommunication.GetLength(1); j++)
                                 {
+                                    if (i.Equals(j))
+                                    {
+                                        if (!double.Parse(number[j]).Equals(0))
+                                        {
+                                            Errors.Add("A TASK CANNOT COMMUNICATE WITH ITSELF LOCALLY");
+                                        }
+
+                                    }
+
                                     LocalCommunication[i, j] = double.Parse(number[j]);
                                 }
 
                             }
 
+                            if (LocalCommunication.GetLength(0) != LocalCommunication.GetLength(1))
+                            {
+                                Errors.Add("ERROR IN LOCAL COMMUNICATION MAPPING");
+                            }
 
                         }
                     }
@@ -454,11 +579,24 @@ namespace DataValidation
 
                                 for (int j = 0; j < RemoteCommunication.GetLength(1); j++)
                                 {
+                                    if (i.Equals(j))
+                                    {
+                                        if (!double.Parse(number[j]).Equals(0))
+                                        {
+                                            Errors.Add("A TASK CANNOT COMMUNICATE WITH ITSELF REMOTELY");
+                                        }
+                                       
+                                    }
+
                                     RemoteCommunication[i, j] = double.Parse(number[j]);
                                 }
 
                             }
 
+                            if (RemoteCommunication.GetLength(0) != RemoteCommunication.GetLength(1))
+                            {
+                                Errors.Add("ERROR IN REMOTE COMMUNICATION MAPPING");
+                            }
 
                         }
                     }
@@ -471,6 +609,7 @@ namespace DataValidation
         public void GetLimit()
         {
             StreamReader sr = new StreamReader(cffFilename);
+            
 
             while(!sr.EndOfStream)
             {
@@ -495,9 +634,23 @@ namespace DataValidation
                         if (line.StartsWith("MAXIMUM-TASKS"))
                         {
                             String[] data = line.Split('=');
-
+                            double value;
                             Limits.Add(new KeyValuePair<String, Double>(data[0], double.Parse(data[1])));
-
+                            
+                            bool rangeCheck= Limits.TryGetValue("MINIMUM-TASKS" ,out value);
+                            
+                            if(rangeCheck)
+                            {
+                                if (value > double.Parse(data[1]))
+                                {
+                                    Errors.Add("MAXIMMUM-TASKS" + " is less than " + " MINIMUM TASKS");
+                                }
+                            }
+                            else
+                            {
+                                Errors.Add("MINIMUM-TASKS" + " NOT PROVIDED");
+                            }
+                        
                         }
 
                         if (line.StartsWith("MINIMUM-PROCESSORS"))
@@ -511,9 +664,24 @@ namespace DataValidation
                         if (line.StartsWith("MAXIMUM-PROCESSORS"))
                         {
                             String[] data = line.Split('=');
+                            double value;
+                            Limits.Add(new KeyValuePair<String, Double>(data[0], double.Parse(data[1])));       
+                           
+                           
 
-                            Limits.Add(new KeyValuePair<String, Double>(data[0], double.Parse(data[1])));
+                            bool rangeCheck = Limits.TryGetValue("MINIMUM-PROCESSORS", out value);
 
+                            if (rangeCheck)
+                            {
+                                if (value > double.Parse(data[1]))
+                                {
+                                    Errors.Add("MAXIMUM-PROCESSORS " + " is less than " + "MINIMUM-PROCESSORS");
+                                }
+                            }
+                            else
+                            {
+                                Errors.Add("MINIMUM-PROCESSORS" + " NOT PROVIDED");
+                            }
                         }
 
 
@@ -528,10 +696,28 @@ namespace DataValidation
                         if (line.StartsWith("MAXIMUM-PROCESSOR-FREQUENCIES"))
                         {
                             String[] data = line.Split('=');
-
+                            double value;
                             Limits.Add(new KeyValuePair<String, Double>(data[0], double.Parse(data[1])));
 
+
+
+                            bool rangeCheck = Limits.TryGetValue("MINIMUM-PROCESSOR-FREQUENCIES", out value);
+
+                            if (rangeCheck)
+                            {
+                                if (value > double.Parse(data[1]))
+                                {
+                                    Errors.Add("MAXIMUM-PROCESSOR-FREQUENCIES " + " is less than" + " MAXIMUM-PROCESSOR-FREQUENCIES");
+                                }
+                            }
+                            else
+                            {
+                                Errors.Add("MINIMUM-PROCESSORS-FREQUENCIES" + " NOT PROVIDED");
+                            }
+
                         }
+
+                    
 
                         if (line.StartsWith("MINIMUM-RAM"))
                         {
@@ -544,8 +730,24 @@ namespace DataValidation
                         if (line.StartsWith("MAXIMUM-RAM"))
                         {
                             String[] data = line.Split('=');
-
+                            double value;
                             Limits.Add(new KeyValuePair<String, Double>(data[0], double.Parse(data[1])));
+
+
+
+                            bool rangeCheck = Limits.TryGetValue("MINIMUM-RAM", out value);
+
+                            if (rangeCheck)
+                            {
+                                if (value > double.Parse(data[1]))
+                                {
+                                    Errors.Add("MAXIMUM-RAM " + " is less than" + " MINIMUM-RAM");
+                                }
+                            }
+                            else
+                            {
+                                Errors.Add("MINIMUM-RAM" + " NOT PROVIDED");
+                            }
 
                         }
 
@@ -560,8 +762,24 @@ namespace DataValidation
                         if (line.StartsWith("MAXIMUM-DOWNLOAD"))
                         {
                             String[] data = line.Split('=');
-
+                            double value;
                             Limits.Add(new KeyValuePair<String, Double>(data[0], double.Parse(data[1])));
+
+
+
+                            bool rangeCheck = Limits.TryGetValue("MINIMUM-DOWNLOAD", out value);
+
+                            if (rangeCheck)
+                            {
+                                if (value > double.Parse(data[1]))
+                                {
+                                    Errors.Add("MAXIMUM-DOWNLOAD " + " is less than" + " MINIMUM-DOWNLOAD");
+                                }
+                            }
+                            else
+                            {
+                                Errors.Add("MINIMUM-DOWNLOAD" + " NOT PROVIDED");
+                            }
 
                         }
 
@@ -576,8 +794,24 @@ namespace DataValidation
                         if (line.StartsWith("MAXIMUM-UPLOAD"))
                         {
                             String[] data = line.Split('=');
-
+                            double value;
                             Limits.Add(new KeyValuePair<String, Double>(data[0], double.Parse(data[1])));
+
+
+
+                            bool rangeCheck = Limits.TryGetValue("MINIMUM-UPLOAD", out value);
+
+                            if (rangeCheck)
+                            {
+                                if (value > double.Parse(data[1]))
+                                {
+                                    Errors.Add("MAXIMUM-UPLOAD " + " is less than " + " MINIMUM-UPLOAD");
+                                }
+                            }
+                            else
+                            {
+                                Errors.Add("MINIMUM-UPLOAD" + " NOT PROVIDED");
+                            }
 
                         }
 
@@ -616,16 +850,45 @@ namespace DataValidation
                         if (line.StartsWith("TASKS"))
                         {
                             String[] data = line.Split('=');
+                            double minimumTask;
+                            double maximumTask;
 
                             Program.Add(new KeyValuePair<String, Double>(data[0], double.Parse(data[1])));
+
+                            bool minimum= Limits.TryGetValue("MINIMUM-TASKS", out minimumTask);
+
+                            bool maximum = Limits.TryGetValue("MAXIMUM-TASKS", out maximumTask);
+
+                            if (minimum && maximum)
+                            {
+                                if (double.Parse(data[1]) < minimumTask || double.Parse(data[1]) > maximumTask)
+                                {
+                                    Errors.Add("PROGRAM TASKS is not in Range");
+                                }
+                            }
+
 
                         }
 
                         if (line.StartsWith("PROCESSORS"))
                         {
                             String[] data = line.Split('=');
+                            double minimumProcessor;
+                            double maximumProcessor;
 
                             Program.Add(new KeyValuePair<String, Double>(data[0], double.Parse(data[1])));
+
+                            bool minimum = Limits.TryGetValue("MINIMUM-PROCESSORS", out minimumProcessor);
+
+                            bool maximum = Limits.TryGetValue("MAXIMUM-PROCESSORS", out maximumProcessor);
+
+                            if (minimum && maximum)
+                            {
+                                if (double.Parse(data[1]) < minimumProcessor || double.Parse(data[1]) > maximumProcessor)
+                                {
+                                    Errors.Add("PROGRAM PROCESSORS is not in Range");
+                                }
+                            }
 
                         }
                     }
