@@ -262,14 +262,14 @@ namespace UnitTests
         {
 
             //Arrange 
-            var path = @"firstTaff.taff";
+            var path = @"files\firstTaff.taff";
             bool isValid = false;
             List<String> Errorlist = new List<string>();
             FileReader fileReader = new FileReader();
             bool expectedResult = true;
 
             //Act
-            string line = fileReader.readTaff(path, out Errorlist);
+            string line = fileReader.ReadTaff(path, out Errorlist);
 
             if (Errorlist.Count == 0)
                 isValid = true;
@@ -286,14 +286,14 @@ namespace UnitTests
         public void TestTAFF_2()
         {
             //Arrange 
-            var path = @"secondTaff.taff";
+            var path = @"files\secondTaff.taff";
             bool isValid = false;
             List<String> Errorlist = new List<string>();
             FileReader fileReader = new FileReader();
             bool expectedResult = true;
 
             //Act
-            string line = fileReader.readTaff(path, out Errorlist);
+            string line = fileReader.ReadTaff(path, out Errorlist);
 
             if (Errorlist.Count == 0)
                 isValid = true;
@@ -310,14 +310,14 @@ namespace UnitTests
         public void TestTAFF_3()
         {
             //Arrange 
-            var path = @"thirdTaff.taff";
+            var path = @"files\thirdTaff.taff";
             bool isValid = true;
             List<String> Errorlist = new List<string>();
             FileReader fileReader = new FileReader();
             bool expectedResult = false;
 
             //Act
-            string line = fileReader.readTaff(path, out Errorlist);
+            string line = fileReader.ReadTaff(path, out Errorlist);
 
             if (Errorlist.Count > 0)
                 isValid = false;
@@ -334,7 +334,7 @@ namespace UnitTests
         public void TestCFF_1()
         {
             //Arrange 
-            var path = @"firstcff.taff";
+            var path = @"files\firstCff.cff";
             bool isValid = false;
             List<String> Errorlist = new List<string>();
             FileReader fileReader = new FileReader();
@@ -354,10 +354,12 @@ namespace UnitTests
 
         ///Second cff file has valid format
 
+
+        [TestMethod]
         public void TestCFF_2()
         {
             //Arrange 
-            var path = @"secondcff.taff";
+            var path = @"files\secondCff.cff";
             bool isValid = false;
             List<String> Errorlist = new List<string>();
             FileReader fileReader = new FileReader();
@@ -375,32 +377,107 @@ namespace UnitTests
         }
 
         ///Third cff file has invalid format
+      
+
+        [TestMethod]
         public void TestCFF_3()
         {
             //Arrange 
-            var path = @"thirdcff.taff";
+            var path = @"files\thirdCff.cff";
             bool isValid = true;
             List<String> Errorlist = new List<string>();
             FileReader fileReader = new FileReader();
-            bool expectedResult = true;
+            bool expectedResult = false;
 
             //Act
-            string line = fileReader.readTaff(path, out Errorlist);
+            string line = fileReader.Readcff(path, out Errorlist);
 
             if (Errorlist.Count > 0)
                 isValid = false;
+            
+                   
 
             //Assert
             Assert.AreEqual(expectedResult, isValid, "The format of cff file is valid");
 
 
         }
+
+
+
+        ///First taff file has 3 errors
         
         [TestMethod]
         public void TestErrorsTaff_1()
         {
             //Arrange 
-            var path = @"firstTaff.taff";
+            var path = @"files\errortaff1.taff";
+            List<String> Errorlist = new List<string>();
+            FileReader fileReader = new FileReader();
+            int expectedResult = 3;
+
+            //Act
+            string line = fileReader.ReadTaff(path, out Errorlist);
+
+            int originalResult = Errorlist.Count;
+
+            //Assert
+            Assert.AreEqual(expectedResult, originalResult, "Invalid amout of errors detected");
+        }
+
+
+
+        ///Second taff file has 2 errors
+
+
+
+        [TestMethod]
+        public void TestErrorsTaff_2()
+        {
+            //Arrange 
+            var path = @"files\errortaff2.taff";         
+            List<String> Errorlist = new List<string>();
+            FileReader fileReader = new FileReader();
+            int expectedResult = 2;
+
+            //Act
+            string line = fileReader.ReadTaff(path, out Errorlist);
+
+            int originalResult = Errorlist.Count;
+
+            //Assert
+            Assert.AreEqual(expectedResult, originalResult, "Invalid amount of errors detected");
+        }
+
+
+        ///Third taff file has 5 errors
+
+        [TestMethod]
+        public void TestErrorsTaff_3()
+        {
+            //Arrange 
+            var path = @"files\errortaff3.taff";
+            List<String> Errorlist = new List<string>();
+            FileReader fileReader = new FileReader();
+            int expectedResult = 5;
+
+            //Act
+            string line = fileReader.ReadTaff(path, out Errorlist);
+
+            int originalResult = Errorlist.Count;
+
+            //Assert
+            Assert.AreEqual(expectedResult, originalResult, "Invalid amount of errors detected");
+        }
+
+
+        ///First cff file has 3 errors
+
+        [TestMethod]
+        public void TestErrorsCff_1()
+        {
+            //Arrange 
+            var path = @"files\errorcff1.cff";
             List<String> Errorlist = new List<string>();
             FileReader fileReader = new FileReader();
             int expectedResult = 3;
@@ -411,13 +488,20 @@ namespace UnitTests
             int originalResult = Errorlist.Count;
 
             //Assert
-            Assert.AreEqual(expectedResult, originalResult, "The format of cff file is invalid");
+            Assert.AreEqual(expectedResult, originalResult, "Invalid amout of errors detected");
         }
+
+
+
+        ///Second cff file has 2 errors
+
+
+
         [TestMethod]
-        public void TestErrorsTaff_2()
+        public void TestErrorsCff_2()
         {
             //Arrange 
-            var path = @"firstTaff.taff";         
+            var path = @"files\errorcff2.cff";
             List<String> Errorlist = new List<string>();
             FileReader fileReader = new FileReader();
             int expectedResult = 2;
@@ -428,13 +512,17 @@ namespace UnitTests
             int originalResult = Errorlist.Count;
 
             //Assert
-            Assert.AreEqual(expectedResult, originalResult, "The format of cff file is invalid");
+            Assert.AreEqual(expectedResult, originalResult, "Invalid amount of errors detected");
         }
+
+
+        ///Third cff file has 5 errors
+
         [TestMethod]
-        public void TestErrorsTaff_3()
+        public void TestErrorsCff_3()
         {
             //Arrange 
-            var path = @"firstTaff.taff";
+            var path = @"files\errorcff3.cff";
             List<String> Errorlist = new List<string>();
             FileReader fileReader = new FileReader();
             int expectedResult = 5;
@@ -445,64 +533,9 @@ namespace UnitTests
             int originalResult = Errorlist.Count;
 
             //Assert
-            Assert.AreEqual(expectedResult, originalResult, "The format of cff file is invalid");
-        }
-        
-        
-        [TestMethod]
-      
-        public void TestErrorTaff_1()
-        {
-            var path = @"firstTaff.taff";
-            List<String> Errorlist = new List<string>();
-            FileReader fileReader = new FileReader();
-            int expectedResult = 3;
-
-            //Act
-            string line = fileReader.Readcff(path, out Errorlist);
-
-            int originalResult = Errorlist.Count;
-
-            //Assert
-            Assert.AreEqual(expectedResult, originalResult, "The format of cff file is invalid");
+            Assert.AreEqual(expectedResult, originalResult, "Invalid amount of errors detected");
         }
 
-        [TestMethod]
-
-        public void TestErrorTaff_2()
-        {
-            var path = @"firstTaff.taff";
-            List<String> Errorlist = new List<string>();
-            FileReader fileReader = new FileReader();
-            int expectedResult = 3;
-
-            //Act
-            string line = fileReader.Readcff(path, out Errorlist);
-
-            int originalResult = Errorlist.Count;
-
-            //Assert
-            Assert.AreEqual(expectedResult, originalResult, "The format of cff file is invalid");
-        }
-
-        [TestMethod]
-
-        public void TestErrorTaff_3()
-        {
-            var path = @"firstTaff.taff";
-            List<String> Errorlist = new List<string>();
-            FileReader fileReader = new FileReader();
-            int expectedResult = 3;
-
-            //Act
-            string line = fileReader.Readcff(path, out Errorlist);
-
-            int originalResult = Errorlist.Count;
-
-            //Assert
-            Assert.AreEqual(expectedResult, originalResult, "The format of cff file is invalid");
-
-        }
 
     }
 }

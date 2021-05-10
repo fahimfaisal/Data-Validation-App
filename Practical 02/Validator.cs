@@ -13,10 +13,7 @@ namespace DataValidation
 {
     class Validator
     {
-        //TaskAllocation TaffFile = new TaskAllocation();
-
-        //Configuration CffFile;
-        
+      
         
 
         public Validator()
@@ -24,42 +21,15 @@ namespace DataValidation
 
         }
 
-        //public void SetTaff()
-        //{
-        //    CffFile = new Configuration(TaffFile.cffFilename);
-        //}
 
+       
 
-
-        public bool ValidateTaffFormat(String TaffFile, out List<String> Errors, out String line)
-        {
-            Errors = new List<string>();
-            StreamReader sr = new StreamReader(TaffFile);
-            line = sr.ReadLine();
-            line = line.Trim();
-
-            while (!sr.EndOfStream)
-            {
-                if (line.StartsWith("//"))
-                {
-
-                }
-                else if (line.StartsWith("CONFIGURATION-DATA"))
-                {
-                    String[] data = line.Split('=');
-
-              
-                }
-
-                
-
-            }
-            return true;
-
-
-        }
-
-
+        /// <summary>
+        /// Validate all the allocations in the taff file
+        /// </summary>
+        /// <param name="TaffFile">The taff file from where to get the allocations</param>
+        /// <param name="CffFile"> the cff file which need for validation cff file</param>
+        /// <returns> string containing calculated allocation value</returns>
 
         public string ValidationAllocations(TaskAllocation TaffFile, Configuration CffFile)
         {
@@ -80,11 +50,11 @@ namespace DataValidation
                 List<string> errors;
                 string line = "";
 
-                if (allocation.map == null)
+                if (allocation.Map == null)
                 {
                     print += "<p style='color:red'>"+"INVALID MAPPING"+"</p>";
                 }
-                else if(allocation.map.Length == 1)
+                else if(allocation.Map.Length == 1)
                 {
                     
                     print += "<p style='color:red'>" + "SAME TASK HAS BEEN ASSIGNED TO MULTIPLE PROCESSOR FOR ALLOCATION ID: " + allocation.ID +"</p>";
@@ -127,6 +97,18 @@ namespace DataValidation
 
         }
 
+
+
+        /// <summary>
+        /// The method to validate a single allocation
+        /// </summary>
+        /// <param name="allocation">the allocation object we want to validate</param>
+        /// <param name="config"> the cff file we need for calculation</param>
+        /// <param name="limit">contains the ram, download and upload speed limits</param>
+        /// <param name="errors">The list of errors we get while doing the validation</param>
+        /// <returns>a key-value pair of allocation object and its calculated values of energy and time</returns>
+
+
         public KeyValuePair<Allocation, double[]> validateAllocation(Allocation allocation, Configuration config, out String[] limit ,out List<string> errors)
         {
 
@@ -140,13 +122,13 @@ namespace DataValidation
 
             List<int[]> activeTasks = new List<int[]>();
             double m = 0d;
-            double[] times = new double[allocation.map.GetLength(0)];
-            double[] energies = new double[allocation.map.GetLength(0)];
-            limit = new string[allocation.map.GetLength(0)];
+            double[] times = new double[allocation.Map.GetLength(0)];
+            double[] energies = new double[allocation.Map.GetLength(0)];
+            limit = new string[allocation.Map.GetLength(0)];
            
             int[] active;
 
-            for (int i = 0; i < allocation.map.GetLength(0); i++)
+            for (int i = 0; i < allocation.Map.GetLength(0); i++)
             {
                 double time = 0d;
                 double energy = 0d;
@@ -156,46 +138,39 @@ namespace DataValidation
                 int upload = 0;
                 int dowload = 0;
 
-                for (int j = 0; j < allocation.map.GetLength(1); j++)
+                for (int j = 0; j < allocation.Map.GetLength(1); j++)
                 {
                     
 
 
-                    if (allocation.map[i, j].Equals(1))
+                    if (allocation.Map[i, j].Equals(1))
                     {
                         active = new int[] { i, j };
 
                      
                         
-                        ram = ram > sortedTasks[j].ram ? ram : sortedTasks[j].ram;
+                        ram = ram > sortedTasks[j].Ram ? ram : sortedTasks[j].Ram;
 
 
+                        dowload = dowload > sortedTasks[j].Download ? dowload : sortedTasks[j].Download;
                         
-
-                      
-                        
-                        dowload = dowload > sortedTasks[j].download ? dowload : sortedTasks[j].download;
-
-                        
-
-                      
-                        
-                        upload = upload > sortedTasks[j].upload ? upload : sortedTasks[j].upload;
+                             
+                        upload = upload > sortedTasks[j].Upload ? upload : sortedTasks[j].Upload;
 
 
                         if (!sortedProcessor[i].CheckRam(sortedTasks[j]))
                         {
-                            errors.Add("THE PROCESSOR ID: " + sortedProcessor[i].ID + " OF ALLOCATION ID: " +allocation.ID+ " HAS " + sortedProcessor[i].Ram +" GB RAM BUT REQUIRES " + sortedTasks[j].ram+" GB RAM");
+                            errors.Add("THE PROCESSOR ID: " + sortedProcessor[i].ID + " OF ALLOCATION ID: " +allocation.ID+ " HAS " + sortedProcessor[i].Ram +" GB RAM BUT REQUIRES " + sortedTasks[j].Ram +" GB RAM");
                         }
 
                         if (!sortedProcessor[i].CheckDownloadSpeed(sortedTasks[j]))
                         {
-                            errors.Add("THE PROCESSOR ID " + sortedProcessor[i].ID + " OF ALLOCATION ID: " + allocation.ID + " HAS " + sortedProcessor[i].Download + " Gbps DOWNLOAD SPEED BUT REQUIRES " + sortedTasks[j].download + " Gbps Download speed");
+                            errors.Add("THE PROCESSOR ID " + sortedProcessor[i].ID + " OF ALLOCATION ID: " + allocation.ID + " HAS " + sortedProcessor[i].Download + " Gbps DOWNLOAD SPEED BUT REQUIRES " + sortedTasks[j].Download + " Gbps Download speed");
                         }
 
                         if (!sortedProcessor[i].CheckUploadSpeed(sortedTasks[j]))
                         {
-                            errors.Add("THE PROCESSOR ID: " + sortedProcessor[i].ID + " OF ALLOCATION ID: " + allocation.ID + " HAS " + sortedProcessor[i].Upload + " Gbps UPLOAD SPEED BUT REQUIRES " + sortedTasks[j].upload+ " Gbps UPLOAD speed");
+                            errors.Add("THE PROCESSOR ID: " + sortedProcessor[i].ID + " OF ALLOCATION ID: " + allocation.ID + " HAS " + sortedProcessor[i].Upload + " Gbps UPLOAD SPEED BUT REQUIRES " + sortedTasks[j].Upload+ " Gbps UPLOAD speed");
                         }
 
                         time += sortedProcessor[i].CalcTime(sortedTasks[j]);
@@ -277,18 +252,18 @@ namespace DataValidation
             foreach (Allocation allocation in TaffFile.allocations.allocations)
             {
 
-                times = new double[allocation.map.GetLength(0)];
-                energies = new double[allocation.map.GetLength(0)];
+                times = new double[allocation.Map.GetLength(0)];
+                energies = new double[allocation.Map.GetLength(0)];
 
-                for (int i = 0; i < allocation.map.GetLength(0); i++)
+                for (int i = 0; i < allocation.Map.GetLength(0); i++)
                 {
                     time = 0d;
 
                     energy = 0d;
 
-                    for (int j = 0; j < allocation.map.GetLength(1); j++)
+                    for (int j = 0; j < allocation.Map.GetLength(1); j++)
                     {
-                        if (allocation.map[i, j].Equals(1))
+                        if (allocation.Map[i, j].Equals(1))
                         {
 
 
@@ -325,15 +300,15 @@ namespace DataValidation
         public string[] printAllocationMap(Allocation allocation)
         {
             string map = "";
-            string[] maps = new string[allocation.map.GetLength(0)];
-            for (int i = 0; i < allocation.map.GetLength(0); i++)
+            string[] maps = new string[allocation.Map.GetLength(0)];
+            for (int i = 0; i < allocation.Map.GetLength(0); i++)
             {
 
                 map = "";
-                for (int j = 0; j < allocation.map.GetLength(1); j++)
+                for (int j = 0; j < allocation.Map.GetLength(1); j++)
                 {
 
-                    map += allocation.map[i, j] + " ";
+                    map += allocation.Map[i, j] + " ";
 
                 }
 

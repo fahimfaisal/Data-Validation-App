@@ -10,10 +10,10 @@ namespace DataValidation.ConfigurationClasses
     {
         public int ID { get; set; }
         public double Runtime { get; set; }
-        public double referenceFrequency { get; set; }
-        public int ram { get; set; }
-        public int download { get; set; }
-        public int upload { get; set; }
+        public double ReferenceFrequency { get; set; }
+        public int Ram { get; set; }
+        public int Download { get; set; }
+        public int Upload { get; set; }
 
 
         public Task()
@@ -24,10 +24,10 @@ namespace DataValidation.ConfigurationClasses
         {
             this.ID = Id;
             this.Runtime = runtime;
-            this.referenceFrequency = referenceFrequency;
-            this.ram = ram;
-            this.download = download;
-            this.upload = upload;
+            this.ReferenceFrequency = referenceFrequency;
+            this.Ram = ram;
+            this.Download = download;
+            this.Upload = upload;
         }
 
 

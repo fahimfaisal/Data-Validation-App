@@ -31,15 +31,29 @@ namespace DataValidation.ConfigurationClasses
             this.Download = download;
             this.Upload = upload;
         }
+
+
+        /// <summary>
+        /// Method to calculate runtime based on the task and processor
+        /// </summary>
+        /// <param name="task"> The task asscociated with the processor</param>
+        /// <returns>the calculated time</returns>
+       
         public double CalcTime(Task task)
         {
 
-            double val = task.Runtime * (task.referenceFrequency / Frequency);
+            double val = task.Runtime * (task.ReferenceFrequency / Frequency);
 
             return val;
 
             
         }
+
+        /// <summary>
+        /// Method to calculate Energy based on the task and processor
+        /// </summary>
+        /// <param name="task"> The task asscociated with the processor</param>
+        /// <returns>the calculated energy</returns>
 
         public double CalcEnergy(Task task)
         {
@@ -48,20 +62,40 @@ namespace DataValidation.ConfigurationClasses
             return val;
         }
 
+
+        /// <summary>
+        /// Method to Check if ram requirement of the task is higher
+        /// </summary>
+        /// <param name="task"> The task asscociated with the processor</param>
+        /// <returns>true if ram requriement is higher</returns>
+
         public bool CheckRam(Task task)
         {
-            return Ram >= task.ram ? true : false;
+            return Ram >= task.Ram ? true : false;
    
         }
 
+        /// <summary>
+        /// Method to Check if download speed requirement of the task is higher
+        /// </summary>
+        /// <param name="task"> The task asscociated with the processor</param>
+        /// <returns>true if upload requriement is higher</returns>
+
+
         public bool CheckDownloadSpeed(Task task)
         {
-            return Download >= task.download ? true : false;
+            return Download >= task.Download ? true : false;
         }
+
+        /// <summary>
+        /// Method to Check if upload speed requirement of the task is higher
+        /// </summary>
+        /// <param name="task"> The task asscociated with the processor</param>
+        /// <returns>true if download requriement is higher</returns>
 
         public bool CheckUploadSpeed(Task task)
         {
-            return Upload >= task.upload ? true : false;
+            return Upload >= task.Upload ? true : false;
         }
 
 

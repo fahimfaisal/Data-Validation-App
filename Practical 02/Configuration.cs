@@ -44,6 +44,15 @@ namespace DataValidation
         }
 
         
+
+
+
+        /// <summary>
+        /// Get the log file name from the cff file
+        /// </summary>
+        /// <returns>true if the log file found</returns>
+
+
         public Boolean Validate()
         {
 
@@ -63,7 +72,7 @@ namespace DataValidation
                 {
 
                 }
-                else if (line.StartsWith("DEFAULT"))
+                else if (line.StartsWith(Keywords._default))
                 {
                     String[] data = line.Split('=');
 
@@ -98,6 +107,11 @@ namespace DataValidation
 
         }
 
+
+        /// <summary>
+        /// Get all the configuration objects
+        /// </summary>
+
         public void GetConfigurations()
         {
             GetLimit();
@@ -122,25 +136,25 @@ namespace DataValidation
                 String line = sr.ReadLine();
                 line = line.Trim();
                 
-                if (line.StartsWith("TASKS"))
+                if (line.StartsWith(Keywords.tasks))
                 {
                      Tasks = new List<Task>();
 
-                    while (!line.StartsWith("END-TASKS"))
+                    while (!line.StartsWith(Keywords.tasks_end))
                     {
                         line = sr.ReadLine();
                         line = line.Trim();
 
-                        if (line.StartsWith("TASK"))
+                        if (line.StartsWith(Keywords.task))
                         {
                             Task task = new Task();
 
-                            while (!line.StartsWith("END-TASK"))
+                            while (!line.StartsWith(Keywords.task_end))
                             {
                                 line = sr.ReadLine();
                                 line = line.Trim();
 
-                                if (line.StartsWith("ID"))
+                                if (line.StartsWith(Keywords.id))
                                 {
                                     String[] data = line.Split('=');
 
@@ -148,7 +162,7 @@ namespace DataValidation
 
                                 }
 
-                                if (line.StartsWith("RUNTIME"))
+                                if (line.StartsWith(Keywords.runtime))
                                 {
 
                                     String[] data = line.Split('=');
@@ -160,18 +174,18 @@ namespace DataValidation
 
                                 }
 
-                                if (line.StartsWith("REFERENCE-FREQUENCY"))
+                                if (line.StartsWith(Keywords.reference_frequency))
                                 {
                                     String[] data = line.Split('=');
 
-                                    task.referenceFrequency = double.Parse(data[1]);
+                                    task.ReferenceFrequency = double.Parse(data[1]);
 
 
 
 
                                 }
 
-                                if (line.StartsWith("RAM"))
+                                if (line.StartsWith(Keywords.ram))
                                 {
 
 
@@ -179,11 +193,11 @@ namespace DataValidation
                                     double minimumRam;
                                     double maximumRam;
 
-                                    task.ram = int.Parse(data[1]);
+                                    task.Ram = int.Parse(data[1]);
 
-                                    bool minimum = Limits.TryGetValue("MINIMUM-RAM", out minimumRam);
+                                    bool minimum = Limits.TryGetValue(Keywords.minimum_ram , out minimumRam);
 
-                                    bool maximum = Limits.TryGetValue("MAXIMUM-RAM", out maximumRam);
+                                    bool maximum = Limits.TryGetValue(Keywords.maximum_ram, out maximumRam);
 
                                     if (minimum && maximum)
                                     {
@@ -196,7 +210,7 @@ namespace DataValidation
 
                                 }
 
-                                if (line.StartsWith("DOWNLOAD"))
+                                if (line.StartsWith(Keywords.download))
                                 {
                                   
 
@@ -206,17 +220,17 @@ namespace DataValidation
                                     double minimumDownload;
                                     double maximumDownload;
                                     
-                                    task.download = int.Parse(data[1]);
+                                    task.Download = int.Parse(data[1]);
 
-                                    bool minimum = Limits.TryGetValue("MINIMUM-DOWNLOAD", out minimumDownload);
+                                    bool minimum = Limits.TryGetValue(Keywords.minimum_download , out minimumDownload);
 
-                                    bool maximum = Limits.TryGetValue("MAXIMUM-DOWNLOAD", out maximumDownload);
+                                    bool maximum = Limits.TryGetValue(Keywords.maximum_download, out maximumDownload);
 
                                     if (minimum && maximum)
                                     {
                                         if (double.Parse(data[1]) < minimumDownload || double.Parse(data[1]) > maximumDownload)
                                         {
-                                            Errors.Add("DOWNLOAD SPEED OF TASK " + "ID : " + task.ID + "IS NOT IN RANGE ");
+                                            Errors.Add("DOWNLOAD SPEED OF TASK " + "ID : " + task.ID + " IS NOT IN RANGE ");
                                         }
                                     }
 
@@ -224,24 +238,24 @@ namespace DataValidation
 
                                 }
 
-                                if (line.StartsWith("UPLOAD"))
+                                if (line.StartsWith(Keywords.upload))
                                 {
                                    
                                     String[] data = line.Split('=');
                                     double minimumUpload;
                                     double maximumUpload;
 
-                                    task.upload = int.Parse(data[1]);
+                                    task.Upload = int.Parse(data[1]);
 
-                                    bool minimum = Limits.TryGetValue("MINIMUM-UPLOAD", out minimumUpload);
+                                    bool minimum = Limits.TryGetValue(Keywords.minimum_upload, out minimumUpload);
 
-                                    bool maximum = Limits.TryGetValue("MAXIMUM-UPLOAD", out maximumUpload);
+                                    bool maximum = Limits.TryGetValue(Keywords.maximum_upload, out maximumUpload);
 
                                     if (minimum && maximum)
                                     {
                                         if (double.Parse(data[1]) < minimumUpload || double.Parse(data[1]) > maximumUpload)
                                         {
-                                            Errors.Add("UPLOAD SPEED OF TASK " + "ID : " + task.ID + "IS NOT IN RANGE ");
+                                            Errors.Add("UPLOAD SPEED OF TASK " + "ID : " + task.ID + " IS NOT IN RANGE ");
                                         }
                                     }
 
@@ -275,26 +289,26 @@ namespace DataValidation
                 String line = sr.ReadLine();
                 line = line.Trim();
 
-                if (line.StartsWith("PROCESSORS"))
+                if (line.StartsWith(Keywords.processors))
                 {
                     Processors = new List<Processor>();
                     
-                    while (!line.StartsWith("END-PROCESSORS"))
+                    while (!line.StartsWith(Keywords.processors_end))
                     {
                         line = sr.ReadLine();
                         line = line.Trim();
 
-                        if (line.StartsWith("PROCESSOR"))
+                        if (line.StartsWith(Keywords.processor))
                         {
 
                             Processor processor = new Processor();
 
-                            while (!line.StartsWith("END-PROCESSOR"))
+                            while (!line.StartsWith(Keywords.processor_end))
                             {
                                 line = sr.ReadLine();
                                 line = line.Trim();
 
-                                if (line.StartsWith("ID"))
+                                if (line.StartsWith(Keywords.id))
                                 {
                                     String[] data = line.Split('=');
 
@@ -302,7 +316,7 @@ namespace DataValidation
                                 }
 
 
-                                if (line.StartsWith("TYPE"))
+                                if (line.StartsWith(Keywords.type))
                                 {
                                     if (processorTypes == null)
                                     {
@@ -324,7 +338,7 @@ namespace DataValidation
                                 }
 
 
-                                if (line.StartsWith("FREQUENCY"))
+                                if (line.StartsWith(Keywords.frequency))
                                 {
                                     String[] data = line.Split('=');
 
@@ -332,7 +346,7 @@ namespace DataValidation
                                 }
 
 
-                                if (line.StartsWith("RAM"))
+                                if (line.StartsWith(Keywords.ram))
                                 {
 
                                     String[] data = line.Split('=');
@@ -341,9 +355,9 @@ namespace DataValidation
 
                                     processor.Ram = int.Parse(data[1]);
 
-                                    bool minimum = Limits.TryGetValue("MINIMUM-RAM", out minimumRam);
+                                    bool minimum = Limits.TryGetValue(Keywords.minimum_ram, out minimumRam);
 
-                                    bool maximum = Limits.TryGetValue("MAXIMUM-RAM", out maximumRam);
+                                    bool maximum = Limits.TryGetValue(Keywords.maximum_ram, out maximumRam);
 
                                     if (minimum && maximum)
                                     {
@@ -357,7 +371,7 @@ namespace DataValidation
                                     
                                 }
 
-                                if (line.StartsWith("DOWNLOAD"))
+                                if (line.StartsWith(Keywords.download))
                                 {
                                     String[] data = line.Split('=');
                                     double minimumDownload;
@@ -365,9 +379,9 @@ namespace DataValidation
 
                                     processor.Download = int.Parse(data[1]);
 
-                                    bool minimum = Limits.TryGetValue("MINIMUM-DOWNLOAD", out minimumDownload);
+                                    bool minimum = Limits.TryGetValue(Keywords.minimum_download, out minimumDownload);
 
-                                    bool maximum = Limits.TryGetValue("MAXIMUM-DOWNLOAD", out maximumDownload);
+                                    bool maximum = Limits.TryGetValue(Keywords.maximum_download, out maximumDownload);
 
                                     if (minimum && maximum)
                                     {
@@ -380,7 +394,7 @@ namespace DataValidation
                                     
                                 }
 
-                                if (line.StartsWith("UPLOAD"))
+                                if (line.StartsWith(Keywords.upload))
                                 {
                                     String[] data = line.Split('=');
                                     double minimumUpload;
@@ -388,9 +402,9 @@ namespace DataValidation
 
                                     processor.Upload = int.Parse(data[1]);
 
-                                    bool minimum = Limits.TryGetValue("MINIMUM-UPLOAD", out minimumUpload);
+                                    bool minimum = Limits.TryGetValue(Keywords.minimum_upload, out minimumUpload);
 
-                                    bool maximum = Limits.TryGetValue("MAXIMUM-UPLOAD", out maximumUpload);
+                                    bool maximum = Limits.TryGetValue(Keywords.maximum_upload, out maximumUpload);
 
                                     if (minimum && maximum)
                                     {
@@ -430,25 +444,25 @@ namespace DataValidation
                 String line = sr.ReadLine();
                 line = line.Trim();
 
-                if (line.StartsWith("PROCESSOR-TYPES"))
+                if (line.StartsWith(Keywords.processor_types))
                 {
                     processorTypes = new List<ProcessorType>();
                     
-                    while (!line.StartsWith("END-PROCESSOR-TYPES"))
+                    while (!line.StartsWith(Keywords.processortypes_end))
                     {
                         line = sr.ReadLine();
                         line = line.Trim();
 
-                        if (line.StartsWith("PROCESSOR-TYPE"))
+                        if (line.StartsWith(Keywords.processor_type))
                         {
                             ProcessorType processorType = new ProcessorType();
 
-                            while (!line.StartsWith("END-PROCESSOR-TYPE"))
+                            while (!line.StartsWith(Keywords.processortype_end))
                             {
                                 line = sr.ReadLine();
                                 line = line.Trim();
 
-                                if (line.StartsWith("NAME"))
+                                if (line.StartsWith(Keywords.name))
                                 {
                                     String[] data = line.Split('=');
                                     String name = data[1].Trim().Trim('"');
@@ -456,17 +470,17 @@ namespace DataValidation
                                  
                                 }
 
-                                if (line.StartsWith("C2"))
+                                if (line.StartsWith(Keywords.c2))
                                 {
                                     String[] data = line.Split('=');
                                     processorType.C2 = double.Parse(data[1]);
                                 }
-                                if (line.StartsWith("C1"))
+                                if (line.StartsWith(Keywords.c1))
                                 {
                                     String[] data = line.Split('=');
                                     processorType.C1 = double.Parse(data[1]);
                                 }
-                                if (line.StartsWith("C0"))
+                                if (line.StartsWith(Keywords.c0))
                                 {
                                     String[] data = line.Split('=');
                                     processorType.C0 = double.Parse(data[1]);
@@ -496,14 +510,14 @@ namespace DataValidation
                 String line = sr.ReadLine();
                 line = line.Trim();
 
-                if (line.StartsWith("LOCAL-COMMUNICATION"))
+                if (line.StartsWith(Keywords.localCommunication))
                 {
-                    while(!line.StartsWith("END-LOCAL-COMMUNICATION"))
+                    while(!line.StartsWith(Keywords.localCommunication_end))
                     {
                         line = sr.ReadLine();
                         line = line.Trim();
 
-                        if (line.StartsWith("MAP"))
+                        if (line.StartsWith(Keywords.map))
                         {
                             String[] data = line.Split('=');
 
@@ -556,14 +570,14 @@ namespace DataValidation
                 String line = sr.ReadLine();
                 line = line.Trim();
 
-                if (line.StartsWith("REMOTE-COMMUNICATION"))
+                if (line.StartsWith(Keywords.remoteCommunication))
                 {
-                    while (!line.StartsWith("END-REMOTE-COMMUNICATION"))
+                    while (!line.StartsWith(Keywords.remoteCommunication_end))
                     {
                         line = sr.ReadLine();
                         line = line.Trim();
 
-                        if (line.StartsWith("MAP"))
+                        if (line.StartsWith(Keywords.map))
                         {
                             String[] data = line.Split('=');
 
@@ -615,15 +629,15 @@ namespace DataValidation
             {
                 String line = sr.ReadLine();
                 line = line.Trim();
-                if (line.StartsWith("LIMITS"))
+                if (line.StartsWith(Keywords.limits))
                 {
                     Limits = new Dictionary<String, Double>();
-                    while(!line.StartsWith("END-LIMITS"))
+                    while(!line.StartsWith(Keywords.limits_end))
                     {
                         line = sr.ReadLine();
                         line = line.Trim();
 
-                        if (line.StartsWith("MINIMUM-TASKS"))
+                        if (line.StartsWith(Keywords.minimum_tasks))
                         {
                             String[] data = line.Split('=');
 
@@ -631,29 +645,29 @@ namespace DataValidation
 
                         }
 
-                        if (line.StartsWith("MAXIMUM-TASKS"))
+                        if (line.StartsWith(Keywords.maximum_tasks))
                         {
                             String[] data = line.Split('=');
                             double value;
                             Limits.Add(new KeyValuePair<String, Double>(data[0], double.Parse(data[1])));
                             
-                            bool rangeCheck= Limits.TryGetValue("MINIMUM-TASKS" ,out value);
+                            bool rangeCheck= Limits.TryGetValue(Keywords.minimum_tasks ,out value);
                             
                             if(rangeCheck)
                             {
                                 if (value > double.Parse(data[1]))
                                 {
-                                    Errors.Add("MAXIMMUM-TASKS" + " is less than " + " MINIMUM TASKS");
+                                    Errors.Add(Keywords.maximum_tasks + " is less than " + " MINIMUM TASKS");
                                 }
                             }
                             else
                             {
-                                Errors.Add("MINIMUM-TASKS" + " NOT PROVIDED");
+                                Errors.Add(Keywords.minimum_tasks + " NOT PROVIDED");
                             }
                         
                         }
 
-                        if (line.StartsWith("MINIMUM-PROCESSORS"))
+                        if (line.StartsWith(Keywords.minimum_processors))
                         {
                             String[] data = line.Split('=');
 
@@ -661,7 +675,7 @@ namespace DataValidation
 
                         }
 
-                        if (line.StartsWith("MAXIMUM-PROCESSORS"))
+                        if (line.StartsWith(Keywords.maximum_processors))
                         {
                             String[] data = line.Split('=');
                             double value;
@@ -669,23 +683,23 @@ namespace DataValidation
                            
                            
 
-                            bool rangeCheck = Limits.TryGetValue("MINIMUM-PROCESSORS", out value);
+                            bool rangeCheck = Limits.TryGetValue(Keywords.minimum_processors, out value);
 
                             if (rangeCheck)
                             {
                                 if (value > double.Parse(data[1]))
                                 {
-                                    Errors.Add("MAXIMUM-PROCESSORS " + " is less than " + "MINIMUM-PROCESSORS");
+                                    Errors.Add(Keywords.maximum_processors + " is less than " + "MINIMUM-PROCESSORS");
                                 }
                             }
                             else
                             {
-                                Errors.Add("MINIMUM-PROCESSORS" + " NOT PROVIDED");
+                                Errors.Add(Keywords.minimum_processors + " NOT PROVIDED");
                             }
                         }
 
 
-                        if (line.StartsWith("MINIMUM-PROCESSOR-FREQUENCIES"))
+                        if (line.StartsWith(Keywords.minimum_procfrequencies))
                         {
                             String[] data = line.Split('=');
 
@@ -693,7 +707,7 @@ namespace DataValidation
 
                         }
 
-                        if (line.StartsWith("MAXIMUM-PROCESSOR-FREQUENCIES"))
+                        if (line.StartsWith(Keywords.maximum_procfrequencies))
                         {
                             String[] data = line.Split('=');
                             double value;
@@ -701,25 +715,25 @@ namespace DataValidation
 
 
 
-                            bool rangeCheck = Limits.TryGetValue("MINIMUM-PROCESSOR-FREQUENCIES", out value);
+                            bool rangeCheck = Limits.TryGetValue(Keywords.minimum_procfrequencies, out value);
 
                             if (rangeCheck)
                             {
                                 if (value > double.Parse(data[1]))
                                 {
-                                    Errors.Add("MAXIMUM-PROCESSOR-FREQUENCIES " + " is less than" + " MAXIMUM-PROCESSOR-FREQUENCIES");
+                                    Errors.Add(Keywords.minimum_procfrequencies + " is less than" + " MAXIMUM-PROCESSOR-FREQUENCIES");
                                 }
                             }
                             else
                             {
-                                Errors.Add("MINIMUM-PROCESSORS-FREQUENCIES" + " NOT PROVIDED");
+                                Errors.Add(Keywords.minimum_procfrequencies + " NOT PROVIDED");
                             }
 
                         }
 
                     
 
-                        if (line.StartsWith("MINIMUM-RAM"))
+                        if (line.StartsWith(Keywords.minimum_ram))
                         {
                             String[] data = line.Split('=');
 
@@ -727,7 +741,7 @@ namespace DataValidation
 
                         }
 
-                        if (line.StartsWith("MAXIMUM-RAM"))
+                        if (line.StartsWith(Keywords.maximum_ram))
                         {
                             String[] data = line.Split('=');
                             double value;
@@ -735,23 +749,23 @@ namespace DataValidation
 
 
 
-                            bool rangeCheck = Limits.TryGetValue("MINIMUM-RAM", out value);
+                            bool rangeCheck = Limits.TryGetValue(Keywords.minimum_ram, out value);
 
                             if (rangeCheck)
                             {
                                 if (value > double.Parse(data[1]))
                                 {
-                                    Errors.Add("MAXIMUM-RAM " + " is less than" + " MINIMUM-RAM");
+                                    Errors.Add(Keywords.maximum_ram + " is less than" + " MINIMUM-RAM");
                                 }
                             }
                             else
                             {
-                                Errors.Add("MINIMUM-RAM" + " NOT PROVIDED");
+                                Errors.Add(Keywords.minimum_ram + " NOT PROVIDED");
                             }
 
                         }
 
-                        if (line.StartsWith("MINIMUM-DOWNLOAD"))
+                        if (line.StartsWith(Keywords.minimum_download))
                         {
                             String[] data = line.Split('=');
 
@@ -759,7 +773,7 @@ namespace DataValidation
 
                         }
 
-                        if (line.StartsWith("MAXIMUM-DOWNLOAD"))
+                        if (line.StartsWith(Keywords.maximum_download))
                         {
                             String[] data = line.Split('=');
                             double value;
@@ -767,23 +781,23 @@ namespace DataValidation
 
 
 
-                            bool rangeCheck = Limits.TryGetValue("MINIMUM-DOWNLOAD", out value);
+                            bool rangeCheck = Limits.TryGetValue(Keywords.minimum_download, out value);
 
                             if (rangeCheck)
                             {
                                 if (value > double.Parse(data[1]))
                                 {
-                                    Errors.Add("MAXIMUM-DOWNLOAD " + " is less than" + " MINIMUM-DOWNLOAD");
+                                    Errors.Add(Keywords.maximum_download + " is less than" + " MINIMUM-DOWNLOAD");
                                 }
                             }
                             else
                             {
-                                Errors.Add("MINIMUM-DOWNLOAD" + " NOT PROVIDED");
+                                Errors.Add(Keywords.minimum_download + " NOT PROVIDED");
                             }
 
                         }
 
-                        if (line.StartsWith("MINIMUM-UPLOAD"))
+                        if (line.StartsWith(Keywords.minimum_upload))
                         {
                             String[] data = line.Split('=');
 
@@ -791,7 +805,7 @@ namespace DataValidation
 
                         }
 
-                        if (line.StartsWith("MAXIMUM-UPLOAD"))
+                        if (line.StartsWith(Keywords.maximum_upload))
                         {
                             String[] data = line.Split('=');
                             double value;
@@ -799,18 +813,18 @@ namespace DataValidation
 
 
 
-                            bool rangeCheck = Limits.TryGetValue("MINIMUM-UPLOAD", out value);
+                            bool rangeCheck = Limits.TryGetValue(Keywords.minimum_upload, out value);
 
                             if (rangeCheck)
                             {
                                 if (value > double.Parse(data[1]))
                                 {
-                                    Errors.Add("MAXIMUM-UPLOAD " + " is less than " + " MINIMUM-UPLOAD");
+                                    Errors.Add(Keywords.maximum_upload + " is less than " + " MINIMUM-UPLOAD");
                                 }
                             }
                             else
                             {
-                                Errors.Add("MINIMUM-UPLOAD" + " NOT PROVIDED");
+                                Errors.Add(Keywords.minimum_upload + " NOT PROVIDED");
                             }
 
                         }
@@ -830,16 +844,16 @@ namespace DataValidation
             {
                 String line = sr.ReadLine();
                 line = line.Trim();
-                if (line.StartsWith("PROGRAM"))
+                if (line.StartsWith(Keywords.program))
                 {
                     Program = new Dictionary<String, Double>();
                    
-                    while (!line.StartsWith("END-PROGRAM"))
+                    while (!line.StartsWith(Keywords.program_end))
                     {
                         line = sr.ReadLine();
                         line = line.Trim();
 
-                        if (line.StartsWith("DURATION"))
+                        if (line.StartsWith(Keywords.duration))
                         {
                             String[] data = line.Split('=');
 
@@ -847,7 +861,7 @@ namespace DataValidation
 
                         }
 
-                        if (line.StartsWith("TASKS"))
+                        if (line.StartsWith(Keywords.tasks))
                         {
                             String[] data = line.Split('=');
                             double minimumTask;
@@ -855,9 +869,9 @@ namespace DataValidation
 
                             Program.Add(new KeyValuePair<String, Double>(data[0], double.Parse(data[1])));
 
-                            bool minimum= Limits.TryGetValue("MINIMUM-TASKS", out minimumTask);
+                            bool minimum= Limits.TryGetValue(Keywords.minimum_tasks, out minimumTask);
 
-                            bool maximum = Limits.TryGetValue("MAXIMUM-TASKS", out maximumTask);
+                            bool maximum = Limits.TryGetValue(Keywords.maximum_tasks, out maximumTask);
 
                             if (minimum && maximum)
                             {
@@ -870,7 +884,7 @@ namespace DataValidation
 
                         }
 
-                        if (line.StartsWith("PROCESSORS"))
+                        if (line.StartsWith(Keywords.processors))
                         {
                             String[] data = line.Split('=');
                             double minimumProcessor;
@@ -878,9 +892,9 @@ namespace DataValidation
 
                             Program.Add(new KeyValuePair<String, Double>(data[0], double.Parse(data[1])));
 
-                            bool minimum = Limits.TryGetValue("MINIMUM-PROCESSORS", out minimumProcessor);
+                            bool minimum = Limits.TryGetValue(Keywords.minimum_processors, out minimumProcessor);
 
-                            bool maximum = Limits.TryGetValue("MAXIMUM-PROCESSORS", out maximumProcessor);
+                            bool maximum = Limits.TryGetValue(Keywords.maximum_processors, out maximumProcessor);
 
                             if (minimum && maximum)
                             {

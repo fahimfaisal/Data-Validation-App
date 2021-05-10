@@ -61,20 +61,497 @@ namespace DataValidation {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to FILENAME.
+        ///   Looks up a localized string similar to DEFAULT.
         /// </summary>
-        internal static string config {
+        internal static string _default {
             get {
-                return ResourceManager.GetString("config", resourceCulture);
+                return ResourceManager.GetString("default", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to END-ALLOCATION.
+        /// </summary>
+        internal static string allocation_end {
+            get {
+                return ResourceManager.GetString("allocation_end", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to ALLOCATION.
+        /// </summary>
+        internal static string allocation_start {
+            get {
+                return ResourceManager.GetString("allocation_start", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to END-ALLOCATIONS.
+        /// </summary>
+        internal static string allocations_end {
+            get {
+                return ResourceManager.GetString("allocations_end", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to ALLOCATIONS.
+        /// </summary>
+        internal static string allocations_start {
+            get {
+                return ResourceManager.GetString("allocations_start", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to C0.
+        /// </summary>
+        internal static string c0 {
+            get {
+                return ResourceManager.GetString("c0", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to C1.
+        /// </summary>
+        internal static string c1 {
+            get {
+                return ResourceManager.GetString("c1", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to C2.
+        /// </summary>
+        internal static string c2 {
+            get {
+                return ResourceManager.GetString("c2", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to END-CONFIGURATION-DATA.
+        /// </summary>
+        internal static string config_end {
+            get {
+                return ResourceManager.GetString("config_end", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to CONFIGURATION-DATA.
         /// </summary>
-        internal static string CONFIG_DATA {
+        internal static string config_start {
             get {
-                return ResourceManager.GetString("CONFIG_DATA", resourceCulture);
+                return ResourceManager.GetString("config_start", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to COUNT.
+        /// </summary>
+        internal static string count {
+            get {
+                return ResourceManager.GetString("count", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to DOWNLOAD.
+        /// </summary>
+        internal static string download {
+            get {
+                return ResourceManager.GetString("download", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to DURATION.
+        /// </summary>
+        internal static string duration {
+            get {
+                return ResourceManager.GetString("duration", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to FILENAME.
+        /// </summary>
+        internal static string filename {
+            get {
+                return ResourceManager.GetString("filename", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to FREQUENCY.
+        /// </summary>
+        internal static string frequency {
+            get {
+                return ResourceManager.GetString("frequency", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to ID.
+        /// </summary>
+        internal static string id {
+            get {
+                return ResourceManager.GetString("id", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to LIMITS.
+        /// </summary>
+        internal static string limits {
+            get {
+                return ResourceManager.GetString("limits", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to END-LIMITS.
+        /// </summary>
+        internal static string limits_end {
+            get {
+                return ResourceManager.GetString("limits_end", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to LOCAL-COMMUNICATION.
+        /// </summary>
+        internal static string localCommunication {
+            get {
+                return ResourceManager.GetString("localCommunication", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to END-LOCAL-COMMUNICATION.
+        /// </summary>
+        internal static string localCommunication_end {
+            get {
+                return ResourceManager.GetString("localCommunication_end", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to END-LOGFILE.
+        /// </summary>
+        internal static string log_end {
+            get {
+                return ResourceManager.GetString("log_end", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to LOGFILE.
+        /// </summary>
+        internal static string log_start {
+            get {
+                return ResourceManager.GetString("log_start", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to MAP.
+        /// </summary>
+        internal static string map {
+            get {
+                return ResourceManager.GetString("map", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to MAXIMUM-DOWNLOAD.
+        /// </summary>
+        internal static string maximum_download {
+            get {
+                return ResourceManager.GetString("maximum_download", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to MAXIMUM-PROCESSORS.
+        /// </summary>
+        internal static string maximum_processors {
+            get {
+                return ResourceManager.GetString("maximum_processors", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to MAXIMUM-PROCESSOR-FREQUENCIES.
+        /// </summary>
+        internal static string maximum_procfrequencies {
+            get {
+                return ResourceManager.GetString("maximum_procfrequencies", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to MAXIMUM-RAM.
+        /// </summary>
+        internal static string maximum_ram {
+            get {
+                return ResourceManager.GetString("maximum_ram", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to MAXIMUM-TASKS.
+        /// </summary>
+        internal static string maximum_tasks {
+            get {
+                return ResourceManager.GetString("maximum_tasks", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to MAXIMUM-UPLOAD.
+        /// </summary>
+        internal static string maximum_upload {
+            get {
+                return ResourceManager.GetString("maximum_upload", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to MINIMUM-DOWNLOAD.
+        /// </summary>
+        internal static string minimum_download {
+            get {
+                return ResourceManager.GetString("minimum_download", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to MINIMUM-PROCESSORS.
+        /// </summary>
+        internal static string minimum_processors {
+            get {
+                return ResourceManager.GetString("minimum_processors", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to MINIMUM-PROCESSOR-FREQUENCIES.
+        /// </summary>
+        internal static string minimum_procfrequencies {
+            get {
+                return ResourceManager.GetString("minimum_procfrequencies", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to MINIMUM-RAM.
+        /// </summary>
+        internal static string minimum_ram {
+            get {
+                return ResourceManager.GetString("minimum_ram", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to MINIMUM-TASKS.
+        /// </summary>
+        internal static string minimum_tasks {
+            get {
+                return ResourceManager.GetString("minimum_tasks", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to MINIMUM-UPLOAD.
+        /// </summary>
+        internal static string minimum_upload {
+            get {
+                return ResourceManager.GetString("minimum_upload", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to NAME.
+        /// </summary>
+        internal static string name {
+            get {
+                return ResourceManager.GetString("name", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to PROCESSOR.
+        /// </summary>
+        internal static string processor {
+            get {
+                return ResourceManager.GetString("processor", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to END-PROCESSOR.
+        /// </summary>
+        internal static string processor_end {
+            get {
+                return ResourceManager.GetString("processor_end", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to PROCESSOR-TYPE.
+        /// </summary>
+        internal static string processor_type {
+            get {
+                return ResourceManager.GetString("processor_type", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to PROCESSOR-TYPES.
+        /// </summary>
+        internal static string processor_types {
+            get {
+                return ResourceManager.GetString("processor_types", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to PROCESSORS.
+        /// </summary>
+        internal static string processors {
+            get {
+                return ResourceManager.GetString("processors", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to END-PROCESSORS.
+        /// </summary>
+        internal static string processors_end {
+            get {
+                return ResourceManager.GetString("processors_end", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to END-PROCESSOR-TYPE.
+        /// </summary>
+        internal static string processortype_end {
+            get {
+                return ResourceManager.GetString("processortype_end", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to END-PROCESSOR-TYPES.
+        /// </summary>
+        internal static string processortypes_end {
+            get {
+                return ResourceManager.GetString("processortypes_end", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to PROGRAM.
+        /// </summary>
+        internal static string program {
+            get {
+                return ResourceManager.GetString("program", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to END-PROGRAM.
+        /// </summary>
+        internal static string program_end {
+            get {
+                return ResourceManager.GetString("program_end", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to RAM.
+        /// </summary>
+        internal static string ram {
+            get {
+                return ResourceManager.GetString("ram", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to REFERENCE-FREQUENCY.
+        /// </summary>
+        internal static string reference_frequency {
+            get {
+                return ResourceManager.GetString("reference_frequency", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to REMOTE-COMMUNICATION.
+        /// </summary>
+        internal static string remoteCommunication {
+            get {
+                return ResourceManager.GetString("remoteCommunication", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to END-REMOTE-COMMUNICATION.
+        /// </summary>
+        internal static string remoteCommunication_end {
+            get {
+                return ResourceManager.GetString("remoteCommunication_end", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to RUNTIME.
+        /// </summary>
+        internal static string runtime {
+            get {
+                return ResourceManager.GetString("runtime", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to TASK.
+        /// </summary>
+        internal static string task {
+            get {
+                return ResourceManager.GetString("task", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to END-TASK.
+        /// </summary>
+        internal static string task_end {
+            get {
+                return ResourceManager.GetString("task_end", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to TASKS.
+        /// </summary>
+        internal static string tasks {
+            get {
+                return ResourceManager.GetString("tasks", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to END-TASKS.
+        /// </summary>
+        internal static string tasks_end {
+            get {
+                return ResourceManager.GetString("tasks_end", resourceCulture);
             }
         }
         
@@ -93,6 +570,24 @@ namespace DataValidation {
         internal static string TOTALTIME {
             get {
                 return ResourceManager.GetString("TOTALTIME", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to TYPE.
+        /// </summary>
+        internal static string type {
+            get {
+                return ResourceManager.GetString("type", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to UPLOAD.
+        /// </summary>
+        internal static string upload {
+            get {
+                return ResourceManager.GetString("upload", resourceCulture);
             }
         }
     }

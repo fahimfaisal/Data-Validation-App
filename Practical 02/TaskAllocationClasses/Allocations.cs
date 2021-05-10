@@ -8,9 +8,9 @@ namespace DataValidation.TaskAllocationClasses
 {
     class Allocations
     {
-        public int count { get; set; }
-        public int taks { get; set; }
-        public int processor { get; set; }
-        public List<Allocation> allocations = new List<Allocation>(); 
+        public int Count { get; set; }
+        public int Taks { get; set; }
+        public int Processor { get; set; }
+        public List<Allocation> allocations { get; set; } = new List<Allocation>(); 
     }
 }

@@ -9,6 +9,6 @@ namespace DataValidation.TaskAllocationClasses
     class Allocation
     {
         public int ID { get; set; }
-        public int[,] map { get; set; }
+        public int[,] Map { get; set; }
     }
 }

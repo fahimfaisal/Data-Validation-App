@@ -17,10 +17,22 @@ namespace DataValidation
         public Allocations allocations { get; set; }
 
 
+        
+        
+        
+        
+        /// <summary>
+        /// Method to get cff filename
+        /// </summary>
+        /// <param name="taffFilename">The path of the taff file</param>
+        /// <returns>boolean value if cff file name found : true</returns>
+        
+        
         public Boolean getCffFilename(string taffFilename)
         {
             cffFilename = null;
             bool valid = false;
+            
             //open the TAff file and extract the cff
 
             StreamReader sr = new StreamReader(taffFilename);
@@ -30,7 +42,7 @@ namespace DataValidation
                 String line = sr.ReadLine();
                 line = line.Trim();
 
-                if (line.StartsWith(Keywords.config))
+                if (line.StartsWith(Keywords.filename))
                 {
                     String[] data = line.Split('=');
 
@@ -55,11 +67,16 @@ namespace DataValidation
             }
             sr.Close();
 
-
-
             return valid;
 
         }
+
+
+
+        /// <summary>
+        /// Method to create an Allocation object by reading the taff file
+        /// </summary>
+        /// <param name="taffFilename"> path of taff file</param>
      
 
         public void GetAllocations(String taffFilename)
@@ -75,7 +92,7 @@ namespace DataValidation
                 line = line.Trim();
 
              
-                if (line.StartsWith("ALLOCATIONS"))
+                if (line.StartsWith(Keywords.allocations_start))
                 {
 
                     allocations = new Allocations();
@@ -83,38 +100,38 @@ namespace DataValidation
                     line = sr.ReadLine();
                     line = line.Trim();
 
-                    while (!line.StartsWith("END-ALLOCATIONS"))
+                    while (!line.StartsWith(Keywords.allocations_end))
                     {
 
                         line = sr.ReadLine();
                         line = line.Trim();
 
-                        if (line.StartsWith("COUNT"))
+                        if (line.StartsWith(Keywords.count))
                         {
                             String[] data = line.Split('=');
 
-                            allocations.count = int.Parse(data[1]);
+                            allocations.Count = int.Parse(data[1]);
                         }
 
-                        if (line.StartsWith("TASKS"))
+                        if (line.StartsWith(Keywords.tasks))
                         {
                             String[] data = line.Split('=');
 
-                            allocations.taks = int.Parse(data[1]);
+                            allocations.Taks = int.Parse(data[1]);
                         }
 
-                        if (line.StartsWith("PROCESSORS"))
+                        if (line.StartsWith(Keywords.processors))
                         {
                             String[] data = line.Split('=');
 
-                            allocations.processor = int.Parse(data[1]);
+                            allocations.Processor = int.Parse(data[1]);
                         }
 
-                        if (line.StartsWith("ALLOCATION"))
+                        if (line.StartsWith(Keywords.allocation_start))
                         {
                             Allocation allocation = new Allocation();
 
-                            while (!line.StartsWith("END-ALLOCATION"))
+                            while (!line.StartsWith(Keywords.allocation_end))
                             {
                                 line = sr.ReadLine();
                                 line = line.Trim();
@@ -129,31 +146,28 @@ namespace DataValidation
 
                                 }
 
-                                if (line.StartsWith("MAP"))
+                                if (line.StartsWith(Keywords.map))
                                 {
                                     String[] data = line.Split('=');
 
                                     String[] processors = data[1].Split(';');
 
                                     String[] tasks = processors[0].Split(',');
-
-                                   
-
-                                    allocation.map = new int[processors.Length, tasks.Length];
-
+                                
+                                    allocation.Map = new int[processors.Length, tasks.Length];
 
 
                                     try
                                     {
-                                        for (int i = 0; i < allocation.map.GetLength(0); i++)
+                                        for (int i = 0; i < allocation.Map.GetLength(0); i++)
                                         {
                                             String[] number = processors[i].Split(',');
 
 
-                                            for (int j = 0; j < allocation.map.GetLength(1); j++)
+                                            for (int j = 0; j < allocation.Map.GetLength(1); j++)
                                             {
 
-                                                allocation.map[i, j] = int.Parse(number[j]);
+                                                allocation.Map[i, j] = int.Parse(number[j]);
 
                                               
 
@@ -165,7 +179,7 @@ namespace DataValidation
                                     catch (Exception)
                                     {
 
-                                        allocation.map = null;
+                                        allocation.Map = null;
                                     }
 
 
@@ -174,20 +188,19 @@ namespace DataValidation
 
                             }
 
-                            if (allocation.map != null)
+                            if (allocation.Map != null)
                             {
 
                                 List<int[]> activeTasks = new List<int[]>();
                                 int[] active;
 
-                                for (int i = 0; i < allocation.map.GetLength(0); i++)
+                                for (int i = 0; i < allocation.Map.GetLength(0); i++)
                                 {
                                     
-
-                                    for (int j = 0; j < allocation.map.GetLength(1); j++)
+                                    for (int j = 0; j < allocation.Map.GetLength(1); j++)
                                     {
                                         
-                                        if (allocation.map[i,j].Equals(1))
+                                        if (allocation.Map[i,j].Equals(1))
                                         {
                                             active = new int[]{ i, j };
                                             activeTasks.Add(active);
@@ -198,8 +211,6 @@ namespace DataValidation
 
                                     
                                 }
-
-
                                 var activeTasksArray = activeTasks.ToArray();
 
                                 foreach (int[] element in activeTasksArray)
@@ -208,7 +219,7 @@ namespace DataValidation
                                     {
                                         if (element[1] == activeTasksArray[i][1] && element[0] != activeTasksArray[i][0])
                                         {
-                                            allocation.map = new int[1,1];
+                                            allocation.Map = new int[1,1];
 
                                         }
                                     }
@@ -216,23 +227,15 @@ namespace DataValidation
                                 }
                             }
 
-
-
-
                             allocations.allocations.Add(allocation);
 
                         }
 
                     }
 
-
-
                 }
             }
-        }
-            
-        
-            
+        }          
         
     }
 

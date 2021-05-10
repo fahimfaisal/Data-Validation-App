@@ -117,16 +117,181 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="config" xml:space="preserve">
+  <data name="allocations_end" xml:space="preserve">
+    <value>END-ALLOCATIONS</value>
+  </data>
+  <data name="allocations_start" xml:space="preserve">
+    <value>ALLOCATIONS</value>
+  </data>
+  <data name="allocation_end" xml:space="preserve">
+    <value>END-ALLOCATION</value>
+  </data>
+  <data name="allocation_start" xml:space="preserve">
+    <value>ALLOCATION</value>
+  </data>
+  <data name="c0" xml:space="preserve">
+    <value>C0</value>
+  </data>
+  <data name="c1" xml:space="preserve">
+    <value>C1</value>
+  </data>
+  <data name="c2" xml:space="preserve">
+    <value>C2</value>
+  </data>
+  <data name="config_end" xml:space="preserve">
+    <value>END-CONFIGURATION-DATA</value>
+  </data>
+  <data name="config_start" xml:space="preserve">
+    <value>CONFIGURATION-DATA</value>
+  </data>
+  <data name="count" xml:space="preserve">
+    <value>COUNT</value>
+  </data>
+  <data name="default" xml:space="preserve">
+    <value>DEFAULT</value>
+  </data>
+  <data name="download" xml:space="preserve">
+    <value>DOWNLOAD</value>
+  </data>
+  <data name="duration" xml:space="preserve">
+    <value>DURATION</value>
+  </data>
+  <data name="filename" xml:space="preserve">
     <value>FILENAME</value>
   </data>
-  <data name="CONFIG_DATA" xml:space="preserve">
-    <value>CONFIGURATION-DATA</value>
+  <data name="frequency" xml:space="preserve">
+    <value>FREQUENCY</value>
+  </data>
+  <data name="id" xml:space="preserve">
+    <value>ID</value>
+  </data>
+  <data name="limits" xml:space="preserve">
+    <value>LIMITS</value>
+  </data>
+  <data name="limits_end" xml:space="preserve">
+    <value>END-LIMITS</value>
+  </data>
+  <data name="localCommunication" xml:space="preserve">
+    <value>LOCAL-COMMUNICATION</value>
+  </data>
+  <data name="localCommunication_end" xml:space="preserve">
+    <value>END-LOCAL-COMMUNICATION</value>
+  </data>
+  <data name="log_end" xml:space="preserve">
+    <value>END-LOGFILE</value>
+  </data>
+  <data name="log_start" xml:space="preserve">
+    <value>LOGFILE</value>
+  </data>
+  <data name="map" xml:space="preserve">
+    <value>MAP</value>
+  </data>
+  <data name="maximum_download" xml:space="preserve">
+    <value>MAXIMUM-DOWNLOAD</value>
+  </data>
+  <data name="maximum_processors" xml:space="preserve">
+    <value>MAXIMUM-PROCESSORS</value>
+  </data>
+  <data name="maximum_procfrequencies" xml:space="preserve">
+    <value>MAXIMUM-PROCESSOR-FREQUENCIES</value>
+  </data>
+  <data name="maximum_ram" xml:space="preserve">
+    <value>MAXIMUM-RAM</value>
+  </data>
+  <data name="maximum_tasks" xml:space="preserve">
+    <value>MAXIMUM-TASKS</value>
+  </data>
+  <data name="maximum_upload" xml:space="preserve">
+    <value>MAXIMUM-UPLOAD</value>
+  </data>
+  <data name="minimum_download" xml:space="preserve">
+    <value>MINIMUM-DOWNLOAD</value>
+  </data>
+  <data name="minimum_processors" xml:space="preserve">
+    <value>MINIMUM-PROCESSORS</value>
+  </data>
+  <data name="minimum_procfrequencies" xml:space="preserve">
+    <value>MINIMUM-PROCESSOR-FREQUENCIES</value>
+  </data>
+  <data name="minimum_ram" xml:space="preserve">
+    <value>MINIMUM-RAM</value>
+  </data>
+  <data name="minimum_tasks" xml:space="preserve">
+    <value>MINIMUM-TASKS</value>
+  </data>
+  <data name="minimum_upload" xml:space="preserve">
+    <value>MINIMUM-UPLOAD</value>
+  </data>
+  <data name="name" xml:space="preserve">
+    <value>NAME</value>
+  </data>
+  <data name="processor" xml:space="preserve">
+    <value>PROCESSOR</value>
+  </data>
+  <data name="processors" xml:space="preserve">
+    <value>PROCESSORS</value>
+  </data>
+  <data name="processors_end" xml:space="preserve">
+    <value>END-PROCESSORS</value>
+  </data>
+  <data name="processortypes_end" xml:space="preserve">
+    <value>END-PROCESSOR-TYPES</value>
+  </data>
+  <data name="processortype_end" xml:space="preserve">
+    <value>END-PROCESSOR-TYPE</value>
+  </data>
+  <data name="processor_end" xml:space="preserve">
+    <value>END-PROCESSOR</value>
+  </data>
+  <data name="processor_type" xml:space="preserve">
+    <value>PROCESSOR-TYPE</value>
+  </data>
+  <data name="processor_types" xml:space="preserve">
+    <value>PROCESSOR-TYPES</value>
+  </data>
+  <data name="program" xml:space="preserve">
+    <value>PROGRAM</value>
+  </data>
+  <data name="program_end" xml:space="preserve">
+    <value>END-PROGRAM</value>
+  </data>
+  <data name="ram" xml:space="preserve">
+    <value>RAM</value>
+  </data>
+  <data name="reference_frequency" xml:space="preserve">
+    <value>REFERENCE-FREQUENCY</value>
+  </data>
+  <data name="remoteCommunication" xml:space="preserve">
+    <value>REMOTE-COMMUNICATION</value>
+  </data>
+  <data name="remoteCommunication_end" xml:space="preserve">
+    <value>END-REMOTE-COMMUNICATION</value>
+  </data>
+  <data name="runtime" xml:space="preserve">
+    <value>RUNTIME</value>
+  </data>
+  <data name="task" xml:space="preserve">
+    <value>TASK</value>
+  </data>
+  <data name="tasks" xml:space="preserve">
+    <value>TASKS</value>
+  </data>
+  <data name="tasks_end" xml:space="preserve">
+    <value>END-TASKS</value>
+  </data>
+  <data name="task_end" xml:space="preserve">
+    <value>END-TASK</value>
   </data>
   <data name="TOTALENERGY" xml:space="preserve">
     <value>1</value>
   </data>
   <data name="TOTALTIME" xml:space="preserve">
     <value>0</value>
+  </data>
+  <data name="type" xml:space="preserve">
+    <value>TYPE</value>
+  </data>
+  <data name="upload" xml:space="preserve">
+    <value>UPLOAD</value>
   </data>
 </root>

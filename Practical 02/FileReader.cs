@@ -13,44 +13,22 @@ namespace DataValidation
     
     public class FileReader
     {
-        public string LogFile { get; }
-        public string cffFile { get; }
-
+       
         public FileReader()
         {
 
         }
 
-        //public bool readTaff(String path, out List<string> Errors)
-        //{
-        //    StreamReader streamReader = new StreamReader(path);
-        //    String data = "";
-
-        //    while (!streamReader.EndOfStream)
-        //    {
-
-        //        String line = streamReader.ReadLine();
-        //        if (line.Contains(Keywords.config))
-        //        {
-        //            data += "<p style='color:red'>" + line + "</p>";
-
-        //        }
-        //        else
-        //        {
-        //            data += "<p>" + line + "</p>";
-        //        }
-               
-                
-        //    }
-
-        //    streamReader.Close();
-
-            
-        //}
 
 
+        /// <summary>
+        /// Method to read the taff file validate it
+        /// </summary>
+        /// <param name="path"> The address of the taff file</param>
+        /// <param name="Errors">List of errors detected in the taff file</param>
+        /// <returns>A string which cotains the full taff file texts</returns>
 
-        public string readTaff(String path, out List<string> Errors )
+        public string ReadTaff(String path, out List<string> Errors )
         {
             StreamReader streamReader = new StreamReader(path);
             String data = "";
@@ -83,13 +61,13 @@ namespace DataValidation
                         data += line ;
                     }
                     
-                    else if (line.StartsWith("CONFIGURATION-DATA"))
+                    else if (line.StartsWith(Keywords.config_start))
                     {
 
                         data += "<p>" + line + "</p>";
                         bool isFileName = false;
 
-                        while (!line.StartsWith("END-CONFIGURATION-DATA"))
+                        while (!line.StartsWith(Keywords.config_end))
                         {
                             line = streamReader.ReadLine();
 
@@ -110,7 +88,7 @@ namespace DataValidation
                             {
                                 data += line;
                             }
-                            else if (line.StartsWith("FILENAME"))
+                            else if (line.StartsWith(Keywords.filename))
                             {
                                 if (isFileName)
                                 {
@@ -119,52 +97,21 @@ namespace DataValidation
                                 }
                                 else
                                 {
-                                    string orginalLine = line;
-                                    string[] texts = line.Split('=');
+                                    string[] lineError = ValidateString(line,Keywords.filename, true);
 
-                                    if (texts.Length.Equals(2))
+                                    data += lineError[0];
+                                    if (!lineError[1].Equals("empty"))
                                     {
-                                        texts[1] = texts[1].Trim();
-
-                                        if (texts[1].StartsWith("\"") && texts[1].EndsWith("\""))
-                                        {
-                                            line = texts[1].Trim('"');
-                                            line = line.Trim();
-
-
-
-                                            if (line.IndexOfAny(Path.GetInvalidFileNameChars()) == -1)
-                                            {
-                                                data += "<p>" + orginalLine + "</p>";
-
-                                            }
-                                            else
-                                            {
-                                                Errors.Add("Invalid name");
-
-                                                data += "<p>" + "<span style='color:red'>" + orginalLine + "&nbsp&nbsp&nbsp" + "ERROR : NO ATTRIBUTE PROVIDED" + "</span>" + "</p>";
-
-                                            }
-                                        }
-
-                                        else
-                                        {
-                                            Errors.Add("FILENAME is not a string");
-
-                                            data += "<p>" + "<span style='color:red'>" + orginalLine + "&nbsp&nbsp&nbsp" + "ERROR : NO ATTRIBUTE PROVIDED" + "</span>" + "</p>";
-                                        }
-
+                                        Errors.Add(lineError[1]);
                                     }
-                                    else
-                                    {
-                                        Errors.Add("FILENAME NOT PROVIDED");
-                                    }
+
+
 
                                     isFileName = true;
                                 }
                                
                             }
-                            else if (line.StartsWith("END-CONFIGURATION-DATA"))
+                            else if (line.StartsWith(Keywords.config_end))
                             {
                                 data += "<p>" + line + "</p>";
                             }
@@ -177,7 +124,7 @@ namespace DataValidation
                         }
 
                     }
-                    else if (line.StartsWith("ALLOCATIONS"))
+                    else if (line.StartsWith(Keywords.allocations_start))
                     {
 
                         data += "<p>" + line + "</p>";
@@ -186,7 +133,7 @@ namespace DataValidation
                         bool isProcessor = false;
 
 
-                        while (!line.StartsWith("END-ALLOCATIONS"))
+                        while (!line.StartsWith(Keywords.allocations_end))
                         {
                             line = streamReader.ReadLine();
                             line = line.Trim();
@@ -207,7 +154,7 @@ namespace DataValidation
                             {
                                 data += line;
                             }
-                            else if (line.StartsWith("COUNT"))
+                            else if (line.StartsWith(Keywords.count))
                             {
                                 if (isCount)
                                 {
@@ -216,7 +163,7 @@ namespace DataValidation
                                 }
                                 else
                                 {
-                                    string[] lineError = ValidateInt(line, "COUNT");
+                                    string[] lineError = ValidateInt(line, Keywords.count);
 
                                     data += lineError[0];
                                     if (!lineError[1].Equals("empty"))
@@ -229,7 +176,7 @@ namespace DataValidation
                              
 
                             }
-                            else if (line.StartsWith("TASKS"))
+                            else if (line.StartsWith(Keywords.tasks))
                             {
                                 if (isTask)
                                 {
@@ -238,7 +185,7 @@ namespace DataValidation
                                 }
                                 else
                                 {
-                                    string[] lineError = ValidateInt(line, "TASKS");
+                                    string[] lineError = ValidateInt(line, Keywords.tasks);
 
                                     data += lineError[0];
                                     if (!lineError[1].Equals("empty"))
@@ -252,7 +199,7 @@ namespace DataValidation
                               
 
                             }
-                            else if (line.StartsWith("PROCESSORS"))
+                            else if (line.StartsWith(Keywords.processors))
                             {
 
 
@@ -263,7 +210,7 @@ namespace DataValidation
                                 }
                                 else
                                 {
-                                    string[] lineError = ValidateInt(line, "PROCESSORS");
+                                    string[] lineError = ValidateInt(line, Keywords.processors);
 
                                     data += lineError[0];
                                     if (!lineError[1].Equals("empty"))
@@ -276,30 +223,35 @@ namespace DataValidation
 
                                
                             }
-                            else if (line.StartsWith("END-ALLOCATIONS"))
+                            else if (line.StartsWith(Keywords.allocations_end))
                             {
                                 data += "<p>" + line + "</p>";
                             }
-                            else if (line.StartsWith("ALLOCATION"))
+                            else if (line.StartsWith(Keywords.allocation_start))
                             {
                                 data += "<p>" + line + "</p>";
                                 bool isId = false;
                                 bool isMap = false;
-                                while (!line.StartsWith("END-ALLOCATION"))
+                                while (!line.StartsWith(Keywords.allocation_end))
                                 {
                                     line = streamReader.ReadLine();
                                     line = line.Trim();
-                                    
-                                    if (line.StartsWith("\\"))
+
+                                    if (Regex.Match(line, commentCheck).Success)
                                     {
                                         data += "<p>" + line + "</p>";
                                     }
-
-                                    else if (Regex.Match("^s*$",line).Success)
+                                    else if (Regex.Match(line, commentLineCheck).Success)
                                     {
-                                        data +=   line ;
+                                        data += "<p>" + "<span style='color:red'>" + line + "&nbsp&nbsp&nbsp" + "ERROR : COMMENT AND STATEMENT COMBMINED" + "</span>" + "</p>";
+                                        Errors.Add("COMBINIG STATEMENT AND COMMENT IS NOT ALLOWED");
                                     }
-                                    else if (line.StartsWith("ID"))
+
+                                    else if (Regex.Match(line, emptyCheck).Success)
+                                    {
+                                        data += line;
+                                    }
+                                    else if (line.StartsWith(Keywords.id))
                                     {
                                         if(isId)
                                         {
@@ -307,10 +259,10 @@ namespace DataValidation
                                         }
                                         else
                                         {
-                                            string[] lineError = ValidateInt(line, "ID");
+                                            string[] lineError = ValidateInt(line, Keywords.id);
 
-                                            data += lineError[0];
-                                            if (!lineError[1].Equals("empty"))
+                                           
+                                            if(!lineError[1].Equals("empty"))
                                             {
                                                 Errors.Add(lineError[1]);
                                             }
@@ -320,7 +272,7 @@ namespace DataValidation
                                        
 
                                     }
-                                    else if (line.StartsWith("MAP"))
+                                    else if (line.StartsWith(Keywords.map))
                                     {
                                        
 
@@ -330,33 +282,29 @@ namespace DataValidation
                                         }
                                         else
                                         {
-                                            int id = 0;
-                                            String orginalLine = line;
-                                            String[] texts = line.Split('=');
-                                            
-                                            if (texts.Length == 2)
+                                           
+                                                                                                                               
+                                            string[] lineError = ValidateMap(line, Keywords.map, "taff");
+
+                                            data += lineError[0];
+                                            if (!lineError[1].Equals("empty"))
                                             {
-                                                string[] lineError = ValidateMap(line, "MAP", "taff");
-
-                                                data += lineError[0];
-                                                if (!lineError[1].Equals("empty"))
-                                                {
-                                                    Errors.Add(lineError[1]);
-                                                }
-
-                                                isMap = true;
+                                                Errors.Add(lineError[1]);
                                             }
+
+                                            isMap = true;
+                                            
                                             
                                            
                                         }
                                        
 
                                     }
-                                    else if (line.StartsWith("END-ALLOCATION"))
+                                    else if (line.StartsWith(Keywords.allocation_end))
                                     {
                                         data += "<p>" + line + "</p>";
                                     }
-                                    else if (line.StartsWith("ALLOCATION"))
+                                    else if (line.StartsWith(Keywords.allocation_start))
                                     {
                                         data += "</p>" + "<span style='color:red'>" + line + "&nbsp&nbsp&nbsp" + "ERROR : NO END ALLOCATION FOUND" + "</span>" + "<p>";
                                     }
@@ -373,7 +321,7 @@ namespace DataValidation
                             }
                             else
                             {
-                                Errors.Add("Inavlid line");
+                                Errors.Add("INVALID LINE");
                                 data += "<p>"+"<span style='color:red'>" + line + "&nbsp&nbsp&nbsp" + "ERROR : INVALID LINE PROVIDED" + "</span>" + "</p>";
                             }
 
@@ -385,13 +333,13 @@ namespace DataValidation
                     else
                     {
                         data += "<p>" + "<span style='color:red'>" + line + "&nbsp&nbsp&nbsp" + "ERROR : INVALID LINE PROVIDED" + "</span>" + "</p>";
-                        Errors.Add("Inavlid line");
+                        Errors.Add("INVALID LINE");
                     }
 
                 }
 
 
-                catch (Exception e)
+                catch (Exception)
                 {
                     return data;
                 }
@@ -407,6 +355,24 @@ namespace DataValidation
             
             return data;
         }
+
+
+
+
+
+
+
+
+
+
+        /// <summary>
+        /// Method to read the cff file validate it
+        /// </summary>
+        /// <param name="path"> The address of the cff file</param>
+        /// <param name="Errors">List of errors detected in the cff file</param>
+        /// <returns>A string which cotains the full cff file texts</returns>
+
+
 
         public string Readcff(String path, out List<String> Errors)
         {
@@ -440,15 +406,17 @@ namespace DataValidation
                         data += line;
                     }
 
-                    else if (line.StartsWith("LOGFILE"))
+                    else if (line.StartsWith(Keywords.log_start))
                     {
                         data += "<p>" + line + "</p>";
-
-                        while (!line.StartsWith("END-LOGFILE"))                           
+                        bool isDefault = false;
+                        
+                        while (!line.StartsWith(Keywords.log_end))                           
                         {
                             line = streamReader.ReadLine();
                             line = line.Trim();
 
+                          
 
                             if (Regex.Match(line, commentCheck).Success)
                             {
@@ -464,49 +432,27 @@ namespace DataValidation
                             {
                                 data += line;
                             }
-                            if (line.StartsWith("DEFAULT"))
+                            else if (line.StartsWith(Keywords._default))
                             {
-                                string orginalLine = line;
-                                string[] texts = line.Split('=');
-
-                                if (texts.Length.Equals(2))
+                                if (isDefault)
                                 {
-                                    texts[1] = texts[1].Trim();
-
-                                    if (texts[1].StartsWith("\"") && texts[1].EndsWith("\""))
-                                    {
-                                        line = texts[1].Trim('"');
-                                        line = line.Trim();
-
-
-
-                                        if (line.IndexOfAny(Path.GetInvalidFileNameChars()) == -1)
-                                        {
-                                            data += "<p>" + orginalLine + "</p>";
-                                        }
-                                        else
-                                        {
-                                            Errors.Add("Invalid name");
-
-                                            data += "<p>" + "<span style='color:red'>" + orginalLine + "&nbsp&nbsp&nbsp" + "ERROR : NO ATTRIBUTE PROVIDED" + "</span>" + "</p>";
-
-                                        }
-                                    }
-
-                                    else
-                                    {
-                                        Errors.Add("FILENAME is not a string");
-
-                                        data += "<p>" + "<span style='color:red'>" + orginalLine + "&nbsp&nbsp&nbsp" + "ERROR : NO ATTRIBUTE PROVIDED" + "</span>" + "</p>";
-                                    }
-
+                                    data += "<p>" + "<span style='color:red'>" + line + "&nbsp&nbsp&nbsp" + "ERROR : NO END-CONFIGURATION STATEMENT FOUND" + "</span>" + "</p>";
+                                    Errors.Add("NO END-CONFIGURATION STATEMENT FOUND");
                                 }
                                 else
                                 {
-                                    Errors.Add("FILENAME NOT PROVIDED");
+                                    string[] lineError = ValidateString(line, Keywords._default, true) ;
+                                    data += lineError[0];
+                                    if (!lineError[1].Equals("empty"))
+                                    {
+                                        Errors.Add(lineError[1]);
+                                    }
+
+                                    isDefault = true;
                                 }
+                             
                             }
-                            else if (line.StartsWith("END-LOGFILE"))
+                            else if (line.StartsWith(Keywords.log_end))
                             {
                                 data += "<p>" + line + "</p>";
                             }
@@ -518,10 +464,10 @@ namespace DataValidation
                         }
                     }
 
-                    else if (line.StartsWith("LIMITS"))
+                    else if (line.StartsWith(Keywords.limits))
                     {
                         data += "<p>" + line + "</p>";
-                        while (!line.StartsWith("END-LIMITS"))
+                        while (!line.StartsWith(Keywords.limits_end))
                         {
                             line = streamReader.ReadLine();
                             line = line.Trim();
@@ -540,9 +486,9 @@ namespace DataValidation
                             {
                                 data += line;
                             }
-                            if (line.StartsWith("MINIMUM-TASKS"))
+                            if (line.StartsWith(Keywords.minimum_tasks))
                             {
-                                string[] lineError = ValidateInt(line, "MINIMUM-TASKS");
+                                string[] lineError = ValidateInt(line, Keywords.minimum_tasks);
 
                                 data += lineError[0];
                                 if (!lineError[1].Equals("empty"))
@@ -550,9 +496,9 @@ namespace DataValidation
                                     Errors.Add(lineError[1]);
                                 }
                             }
-                            else if (line.StartsWith("MAXIMUM-TASKS"))
+                            else if (line.StartsWith(Keywords.maximum_tasks))
                             {
-                                string[] lineError = ValidateInt(line, "MAXIMUM-TASKS");
+                                string[] lineError = ValidateInt(line, Keywords.maximum_tasks);
 
                                 data += lineError[0];
                                 if (!lineError[1].Equals("empty"))
@@ -560,9 +506,9 @@ namespace DataValidation
                                     Errors.Add(lineError[1]);
                                 }
                             }
-                            else if (line.StartsWith("MAXIMUM-TASKS"))
+                            else if (line.StartsWith(Keywords.maximum_tasks))
                             {
-                                string[] lineError = ValidateInt(line, "MAXIMUM-TASKS");
+                                string[] lineError = ValidateInt(line, Keywords.maximum_tasks);
 
                                 data += lineError[0];
                                 if (!lineError[1].Equals("empty"))
@@ -570,9 +516,9 @@ namespace DataValidation
                                     Errors.Add(lineError[1]);
                                 }
                             }
-                            else if (line.StartsWith("MINIMUM-PROCESSORS"))
+                            else if (line.StartsWith(Keywords.minimum_processors))
                             {
-                                string[] lineError = ValidateInt(line, "MINIMUM-PROCESSORS");
+                                string[] lineError = ValidateInt(line, Keywords.minimum_processors);
 
                                 data += lineError[0];
                                 if (!lineError[1].Equals("empty"))
@@ -580,9 +526,9 @@ namespace DataValidation
                                     Errors.Add(lineError[1]);
                                 }
                             }
-                            else if (line.StartsWith("MAXIMUM-PROCESSORS"))
+                            else if (line.StartsWith(Keywords.maximum_processors))
                             {
-                                string[] lineError = ValidateInt(line, "MAXIMUM-PROCESSORS");
+                                string[] lineError = ValidateInt(line, Keywords.maximum_processors);
 
                                 data += lineError[0];
                                 if (!lineError[1].Equals("empty"))
@@ -590,9 +536,9 @@ namespace DataValidation
                                     Errors.Add(lineError[1]);
                                 }
                             }
-                            else if (line.StartsWith("MINIMUM-PROCESSOR-FREQUENCIES"))
+                            else if (line.StartsWith(Keywords.minimum_procfrequencies))
                             {
-                                string[] lineError = ValidateDouble(line, "MINIMUM-PROCESSOR-FREQUENCIES");
+                                string[] lineError = ValidateDouble(line, Keywords.minimum_procfrequencies);
 
                                 data += lineError[0];
                                 if (!lineError[1].Equals("empty"))
@@ -600,9 +546,9 @@ namespace DataValidation
                                     Errors.Add(lineError[1]);
                                 }
                             }
-                            else if (line.StartsWith("MAXIMUM-PROCESSOR-FREQUENCIES"))
+                            else if (line.StartsWith(Keywords.maximum_procfrequencies))
                             {
-                                string[] lineError = ValidateDouble(line, "MAXIMUM-PROCESSOR-FREQUENCIES");
+                                string[] lineError = ValidateDouble(line, Keywords.maximum_procfrequencies);
 
                                 data += lineError[0];
                                 if (!lineError[1].Equals("empty"))
@@ -610,9 +556,9 @@ namespace DataValidation
                                     Errors.Add(lineError[1]);
                                 }
                             }
-                            else if (line.StartsWith("MINIMUM-RAM"))
+                            else if (line.StartsWith(Keywords.minimum_ram))
                             {
-                                string[] lineError = ValidateInt(line, "MINIMUM-RAM");
+                                string[] lineError = ValidateInt(line, Keywords.minimum_ram);
 
                                 data += lineError[0];
                                 if (!lineError[1].Equals("empty"))
@@ -620,9 +566,9 @@ namespace DataValidation
                                     Errors.Add(lineError[1]);
                                 }
                             }
-                            else if (line.StartsWith("MAXIMUM-RAM"))
+                            else if (line.StartsWith(Keywords.maximum_ram))
                             {
-                                string[] lineError = ValidateInt(line, "MAXIMUM-RAM");
+                                string[] lineError = ValidateInt(line, Keywords.maximum_ram);
 
                                 data += lineError[0];
                                 if (!lineError[1].Equals("empty"))
@@ -630,9 +576,9 @@ namespace DataValidation
                                     Errors.Add(lineError[1]);
                                 }
                             }
-                            else if (line.StartsWith("MINIMUM-DOWNLOAD"))
+                            else if (line.StartsWith(Keywords.minimum_download))
                             {
-                                string[] lineError = ValidateInt(line, "MINIMUM-DOWNLOAD");
+                                string[] lineError = ValidateInt(line, Keywords.minimum_download);
 
                                 data += lineError[0];
                                 if (!lineError[1].Equals("empty"))
@@ -640,9 +586,9 @@ namespace DataValidation
                                     Errors.Add(lineError[1]);
                                 }
                             }
-                            else if (line.StartsWith("MAXIMUM-DOWNLOAD"))
+                            else if (line.StartsWith(Keywords.maximum_download))
                             {
-                                string[] lineError = ValidateInt(line, "MAXIMUM-DOWNLOAD");
+                                string[] lineError = ValidateInt(line, Keywords.maximum_download);
 
                                 data += lineError[0];
                                 if (!lineError[1].Equals("empty"))
@@ -650,9 +596,9 @@ namespace DataValidation
                                     Errors.Add(lineError[1]);
                                 }
                             }
-                            else if (line.StartsWith("MINIMUM-UPLOAD"))
+                            else if (line.StartsWith(Keywords.minimum_upload))
                             {
-                                string[] lineError = ValidateInt(line, "MINIMUM-UPLOAD");
+                                string[] lineError = ValidateInt(line, Keywords.minimum_upload);
 
                                 data += lineError[0];
                                 if (!lineError[1].Equals("empty"))
@@ -660,9 +606,9 @@ namespace DataValidation
                                     Errors.Add(lineError[1]);
                                 }
                             }
-                            else if (line.StartsWith("MAXIMUM-UPLOAD"))
+                            else if (line.StartsWith(Keywords.maximum_upload))
                             {
-                                string[] lineError = ValidateInt(line, "MAXIMUM-UPLOAD");
+                                string[] lineError = ValidateInt(line, Keywords.maximum_upload);
 
                                 data += lineError[0];
                                 if (!lineError[1].Equals("empty"))
@@ -670,7 +616,7 @@ namespace DataValidation
                                     Errors.Add(lineError[1]);
                                 }
                             }
-                            else if (line.StartsWith("END-LIMITS"))
+                            else if (line.StartsWith(Keywords.limits_end))
                             {
                                 data += "<p>" + line + "</p>";
                             }
@@ -682,10 +628,10 @@ namespace DataValidation
                         }
                     }
 
-                    else if (line.StartsWith("PROGRAM"))
+                    else if (line.StartsWith(Keywords.program))
                     {
                         data += "<p>" + line + "</p>";
-                        while (!line.StartsWith("END-PROGRAM"))
+                        while (!line.StartsWith(Keywords.program_end))
                         {
                             line = streamReader.ReadLine();
                             line = line.Trim();
@@ -704,9 +650,9 @@ namespace DataValidation
                             {
                                 data += line;
                             }
-                            else if (line.StartsWith("DURATION"))
+                            else if (line.StartsWith(Keywords.duration))
                             {
-                                string[] lineError = ValidateDouble(line, "DURATION");
+                                string[] lineError = ValidateDouble(line, Keywords.duration);
 
                                 data += lineError[0];
                                 if (!lineError[1].Equals("empty"))
@@ -714,9 +660,9 @@ namespace DataValidation
                                     Errors.Add(lineError[1]);
                                 }
                             }
-                            else if (line.StartsWith("TASKS"))
+                            else if (line.StartsWith(Keywords.tasks))
                             {
-                                string[] lineError = ValidateInt(line, "TASKS");
+                                string[] lineError = ValidateInt(line, Keywords.tasks);
 
                                 data += lineError[0];
                                 if (!lineError[1].Equals("empty"))
@@ -724,9 +670,9 @@ namespace DataValidation
                                     Errors.Add(lineError[1]);
                                 }
                             }
-                            else if (line.StartsWith("PROCESSORS"))
+                            else if (line.StartsWith(Keywords.processors))
                             {
-                                string[] lineError = ValidateInt(line, "PROCESSORS");
+                                string[] lineError = ValidateInt(line, Keywords.processors);
 
                                 data += lineError[0];
                                 if (!lineError[1].Equals("empty"))
@@ -735,7 +681,7 @@ namespace DataValidation
                                 }
 
                             }
-                            else if (line.StartsWith("END-PROGRAM"))
+                            else if (line.StartsWith(Keywords.program_end))
                             {
                                 data += "<p>" + line + "</p>";
                             }
@@ -751,11 +697,11 @@ namespace DataValidation
                     }
 
 
-                    else if (line.StartsWith("TASKS"))
+                    else if (line.StartsWith(Keywords.tasks))
                     {
                         data += "<p>" + line + "</p>";
 
-                        while (!line.StartsWith("END-TASKS"))
+                        while (!line.StartsWith(Keywords.tasks_end))
                         {
                             line = streamReader.ReadLine();
                             line = line.Trim();
@@ -774,11 +720,11 @@ namespace DataValidation
                             {
                                 data += line;
                             }
-                            else if (line.StartsWith("TASK"))
+                            else if (line.StartsWith(Keywords.task))
                             {
                                 data += "<p>" + line + "</p>";
 
-                                while (!line.StartsWith("END-TASK"))
+                                while (!line.StartsWith(Keywords.task_end))
                                 {
                                     line = streamReader.ReadLine();
                                     line = line.Trim();
@@ -798,9 +744,9 @@ namespace DataValidation
                                     {
                                         data += line;
                                     }
-                                    else if (line.StartsWith("ID"))
+                                    else if (line.StartsWith(Keywords.id))
                                     {
-                                        string[] lineError = ValidateInt(line, "ID");
+                                        string[] lineError = ValidateInt(line, Keywords.id);
 
                                         data += lineError[0];
                                         if (!lineError[1].Equals("empty"))
@@ -808,9 +754,9 @@ namespace DataValidation
                                             Errors.Add(lineError[1]);
                                         }
                                     }
-                                    else if (line.StartsWith("RUNTIME"))
+                                    else if (line.StartsWith(Keywords.runtime))
                                     {
-                                        string[] lineError = ValidateDouble(line, "RUNTIME");
+                                        string[] lineError = ValidateDouble(line, Keywords.runtime);
 
                                         data += lineError[0];
                                         if (!lineError[1].Equals("empty"))
@@ -818,9 +764,9 @@ namespace DataValidation
                                             Errors.Add(lineError[1]);
                                         }
                                     }
-                                    else if (line.StartsWith("REFERENCE-FREQUENCY"))
+                                    else if (line.StartsWith(Keywords.reference_frequency))
                                     {
-                                        string[] lineError = ValidateDouble(line, "REFERENCE-FREQUENCY");
+                                        string[] lineError = ValidateDouble(line, Keywords.reference_frequency);
 
                                         data += lineError[0];
                                         if (!lineError[1].Equals("empty"))
@@ -828,9 +774,9 @@ namespace DataValidation
                                             Errors.Add(lineError[1]);
                                         }
                                     }
-                                    else if (line.StartsWith("RAM"))
+                                    else if (line.StartsWith(Keywords.ram))
                                     {
-                                        string[] lineError = ValidateDouble(line, "RAM");
+                                        string[] lineError = ValidateDouble(line, Keywords.ram);
 
                                         data += lineError[0];
                                         if (!lineError[1].Equals("empty"))
@@ -838,9 +784,9 @@ namespace DataValidation
                                             Errors.Add(lineError[1]);
                                         }
                                     }
-                                    else if (line.StartsWith("DOWNLOAD"))
+                                    else if (line.StartsWith(Keywords.download))
                                     {
-                                        string[] lineError = ValidateInt(line, "DOWNLOAD");
+                                        string[] lineError = ValidateInt(line, Keywords.download);
 
                                         data += lineError[0];
                                         if (!lineError[1].Equals("empty"))
@@ -848,9 +794,9 @@ namespace DataValidation
                                             Errors.Add(lineError[1]);
                                         }
                                     }
-                                    else if (line.StartsWith("UPLOAD"))
+                                    else if (line.StartsWith(Keywords.upload))
                                     {
-                                        string[] lineError = ValidateInt(line, "UPLOAD");
+                                        string[] lineError = ValidateInt(line, Keywords.upload);
 
                                         data += lineError[0];
                                         if (!lineError[1].Equals("empty"))
@@ -858,7 +804,7 @@ namespace DataValidation
                                             Errors.Add(lineError[1]);
                                         }
                                     }
-                                    else if (line.StartsWith("END-TASK"))
+                                    else if (line.StartsWith(Keywords.task_end))
                                     {
                                         data += "<p>" + line + "</p>";
                                     }
@@ -870,7 +816,7 @@ namespace DataValidation
 
                                 }
                             }
-                            else if (line.StartsWith("END-TASKS"))
+                            else if (line.StartsWith(Keywords.tasks_end))
                             {
                                 data += "<p>" + line + "</p>";
                             }
@@ -885,11 +831,11 @@ namespace DataValidation
 
 
 
-                    else if (line.StartsWith("PROCESSORS"))
+                    else if (line.StartsWith(Keywords.processors))
                     {
                         data += "<p>" + line + "</p>";
 
-                        while (!line.StartsWith("END-PROCESSORS"))
+                        while (!line.StartsWith(Keywords.processors_end))
                         {
                             line = streamReader.ReadLine();
                             line = line.Trim();
@@ -909,27 +855,33 @@ namespace DataValidation
                             {
                                 data += line;
                             }
-                            else if (line.StartsWith("PROCESSOR"))
+                            else if (line.StartsWith(Keywords.processor))
                             {
                                 data += "<p>" + line + "</p>";
 
-                                while (!line.StartsWith("END-PROCESSOR"))
+                                while (!line.StartsWith(Keywords.processor_end))
                                 {
                                     line = streamReader.ReadLine();
                                     line = line.Trim();
 
 
-                                    if (line.StartsWith("//"))
+                                    if (Regex.Match(line, commentCheck).Success)
                                     {
                                         data += "<p>" + line + "</p>";
                                     }
-                                    else if (Regex.Match("^\\s*$", line).Success)
+                                    else if (Regex.Match(line, commentLineCheck).Success)
+                                    {
+                                        data += "<p>" + "<span style='color:red'>" + line + "&nbsp&nbsp&nbsp" + "ERROR : COMMENT AND STATEMENT COMBMINED" + "</span>" + "</p>";
+                                        Errors.Add("COMBINIG STATEMENT AND COMMENT IS NOT ALLOWED");
+                                    }
+
+                                    else if (Regex.Match(line, emptyCheck).Success)
                                     {
                                         data += line;
                                     }
-                                    else if (line.StartsWith("ID"))
+                                    else if (line.StartsWith(Keywords.id))
                                     {
-                                        string[] lineError = ValidateInt(line, "ID");
+                                        string[] lineError = ValidateInt(line, Keywords.id);
 
                                         data += lineError[0];
                                         if (!lineError[1].Equals("empty"))
@@ -937,9 +889,9 @@ namespace DataValidation
                                             Errors.Add(lineError[1]);
                                         }
                                     }
-                                    else if (line.StartsWith("TYPE"))
+                                    else if (line.StartsWith(Keywords.type))
                                     {
-                                        string[] lineError = ValidateString(line, "TYPE");
+                                        string[] lineError = ValidateString(line, Keywords.type, false);
 
                                         data += lineError[0];
                                         if (!lineError[1].Equals("empty"))
@@ -947,9 +899,9 @@ namespace DataValidation
                                             Errors.Add(lineError[1]);
                                         }
                                     }
-                                    else if (line.StartsWith("FREQUENCY"))
+                                    else if (line.StartsWith(Keywords.frequency))
                                     {
-                                        string[] lineError = ValidateDouble(line, "FREQUENCY");
+                                        string[] lineError = ValidateDouble(line, Keywords.frequency);
 
                                         data += lineError[0];
                                         if (!lineError[1].Equals("empty"))
@@ -957,9 +909,9 @@ namespace DataValidation
                                             Errors.Add(lineError[1]);
                                         }
                                     }
-                                    else if (line.StartsWith("RAM"))
+                                    else if (line.StartsWith(Keywords.ram))
                                     {
-                                        string[] lineError = ValidateInt(line, "RAM");
+                                        string[] lineError = ValidateInt(line, Keywords.ram);
 
                                         data += lineError[0];
                                         if (!lineError[1].Equals("empty"))
@@ -967,9 +919,9 @@ namespace DataValidation
                                             Errors.Add(lineError[1]);
                                         }
                                     }
-                                    else if (line.StartsWith("DOWNLOAD"))
+                                    else if (line.StartsWith(Keywords.download))
                                     {
-                                        string[] lineError = ValidateInt(line, "DOWNLOAD");
+                                        string[] lineError = ValidateInt(line, Keywords.download);
 
                                         data += lineError[0];
                                         if (!lineError[1].Equals("empty"))
@@ -977,9 +929,9 @@ namespace DataValidation
                                             Errors.Add(lineError[1]);
                                         }
                                     }
-                                    else if (line.StartsWith("UPLOAD"))
+                                    else if (line.StartsWith(Keywords.upload))
                                     {
-                                        string[] lineError = ValidateInt(line, "UPLOAD");
+                                        string[] lineError = ValidateInt(line, Keywords.upload);
 
                                         data += lineError[0];
                                         if (!lineError[1].Equals("empty"))
@@ -987,7 +939,7 @@ namespace DataValidation
                                             Errors.Add(lineError[1]);
                                         }
                                     }
-                                    else if (line.StartsWith("END-PROCESSOR"))
+                                    else if (line.StartsWith(Keywords.processor_end))
                                     {
                                         data += "<p>" + line + "</p>";
                                     }
@@ -1001,7 +953,7 @@ namespace DataValidation
                                 }
 
                             }
-                            else if (line.StartsWith("END-PROCESSORS"))
+                            else if (line.StartsWith(Keywords.processors_end))
                             {
                                 data += "<p>" + line + "</p>";
                             }
@@ -1016,12 +968,12 @@ namespace DataValidation
 
 
 
-                    else if (line.StartsWith("PROCESSOR-TYPES"))
+                    else if (line.StartsWith(Keywords.processor_types))
                     {
 
                         data += "<p>" + line + "</p>";
 
-                        while (!line.StartsWith("END-PROCESSOR-TYPES"))
+                        while (!line.StartsWith(Keywords.processortypes_end))
                         {
                             line = streamReader.ReadLine();
                             line = line.Trim();
@@ -1042,17 +994,16 @@ namespace DataValidation
                             {
                                 data += line;
                             }
-                            else if (line.StartsWith("END-PROCESSOR-TYPES"))
+                            else if (line.StartsWith(Keywords.processortypes_end))
                             {
                                 data += "<p>" + line + "</p>";
                             }
-                            else if (line.StartsWith("PROCESSOR-TYPE"))
+                            else if (line.StartsWith(Keywords.processor_type))
                             {
                                 data += "<p>" + line + "</p>";
-                                bool isId = false;
-                                bool isMap = false;
+                              
 
-                                while (!line.StartsWith("END-PROCESSOR-TYPE"))
+                                while (!line.StartsWith(Keywords.processortype_end))
                                 {
                                     line = streamReader.ReadLine();
                                     line = line.Trim();
@@ -1066,9 +1017,9 @@ namespace DataValidation
                                         data += "<p>" + "<span style='color:red'>" + line + "&nbsp&nbsp&nbsp" + "ERROR : COMMENT AND STATEMENT COMBMINED" + "</span>" + "</p>";
                                         Errors.Add("COMBINIG STATEMENT AND COMMENT IS NOT ALLOWED");
                                     }
-                                    else if (line.StartsWith("NAME"))
+                                    else if (line.StartsWith(Keywords.name))
                                     {
-                                        string[] lineError = ValidateString(line, "NAME");
+                                        string[] lineError = ValidateString(line, Keywords.name, false);
 
                                         data += lineError[0];
                                         if (!lineError[1].Equals("empty"))
@@ -1078,10 +1029,10 @@ namespace DataValidation
 
 
                                     }
-                                    else if (line.StartsWith("C2"))
+                                    else if (line.StartsWith(Keywords.c2))
                                     {
 
-                                        string[] lineError = ValidateDouble(line, "C2");
+                                        string[] lineError = ValidateDouble(line, Keywords.c2);
 
                                         data += lineError[0];
                                         if (!lineError[1].Equals("empty"))
@@ -1090,9 +1041,9 @@ namespace DataValidation
                                         }
 
                                     }
-                                    else if (line.StartsWith("C1"))
+                                    else if (line.StartsWith(Keywords.c1))
                                     {
-                                        string[] lineError = ValidateDouble(line, "C1");
+                                        string[] lineError = ValidateDouble(line, Keywords.c1);
 
                                         data += lineError[0];
                                         if (!lineError[1].Equals("empty"))
@@ -1100,9 +1051,9 @@ namespace DataValidation
                                             Errors.Add(lineError[1]);
                                         }
                                     }
-                                    else if (line.StartsWith("C0"))
+                                    else if (line.StartsWith(Keywords.c0))
                                     {
-                                        string[] lineError = ValidateDouble(line, "C0");
+                                        string[] lineError = ValidateDouble(line, Keywords.c0);
 
                                         data += lineError[0];
                                         if (!lineError[1].Equals("empty"))
@@ -1110,7 +1061,7 @@ namespace DataValidation
                                             Errors.Add(lineError[1]);
                                         }
                                     }
-                                    else if (line.StartsWith("END-PROCESSOR-TYPE"))
+                                    else if (line.StartsWith(Keywords.processortype_end))
                                     {
                                         data += "</p>"+ line +  "<p>";
                                     }
@@ -1127,13 +1078,13 @@ namespace DataValidation
 
 
 
-                    else if (line.StartsWith("LOCAL-COMMUNICATION"))
+                    else if (line.StartsWith(Keywords.localCommunication))
                     {
                         data += "<p>" + line + "</p>";
 
                         bool isMap = false;
 
-                        while (!line.StartsWith("END-LOCAL-COMMUNICATION"))
+                        while (!line.StartsWith(Keywords.localCommunication_end))
                         {
                             line = streamReader.ReadLine();
                             line = line.Trim();
@@ -1152,7 +1103,7 @@ namespace DataValidation
                             {
                                 data += line;
                             }
-                            else if (line.StartsWith("MAP"))
+                            else if (line.StartsWith(Keywords.map))
                             {
 
 
@@ -1162,29 +1113,30 @@ namespace DataValidation
                                 }
                                 else
                                 {
-                                    int id = 0;
-                                    String orginalLine = line;
-                                    String[] texts = line.Split('=');
+                                    
+                                        String orginalLine = line;
+                                  
 
-                                    if (texts.Length == 2)
-                                    {
-                                        string[] lineError = ValidateMap(line, "MAP", "cff");
+                                    
+                                    
+                                        string[] lineError = ValidateMap(line, Keywords.map, "cff");
 
                                         data += lineError[0];
+                                        
                                         if (!lineError[1].Equals("empty"))
                                         {
                                             Errors.Add(lineError[1]);
                                         }
 
                                         isMap = true;
-                                    }
+                                    
 
 
                                 }
 
 
                             }
-                            else if (line.StartsWith("END-LOCAL-COMMUNICATION"))
+                            else if (line.StartsWith(Keywords.localCommunication_end))
                             {
                                 data += "<p>" + line + "</p>";
                             }
@@ -1200,12 +1152,12 @@ namespace DataValidation
 
                     }
 
-                    else if (line.StartsWith("REMOTE-COMMUNICATION"))
+                    else if (line.StartsWith(Keywords.remoteCommunication))
                     {
                         data += "<p>" + line + "</p>";
 
                         bool isMap = false;
-                        while (!line.StartsWith("END-REMOTE-COMMUNICATION"))
+                        while (!line.StartsWith(Keywords.remoteCommunication_end))
                         {
                             line = streamReader.ReadLine();
                             line = line.Trim();
@@ -1225,7 +1177,7 @@ namespace DataValidation
                             {
                                 data += line;
                             }
-                            else if (line.StartsWith("MAP"))
+                            else if (line.StartsWith(Keywords.map))
                             {
 
 
@@ -1235,13 +1187,9 @@ namespace DataValidation
                                 }
                                 else
                                 {
-                                    int id = 0;
-                                    String orginalLine = line;
-                                    String[] texts = line.Split('=');
+                                    
 
-                                    if (texts.Length == 2)
-                                    {
-                                        string[] lineError = ValidateMap(line, "MAP", "cff");
+                                        string[] lineError = ValidateMap(line, Keywords.map, "cff");
 
                                         data += lineError[0];
                                         if (!lineError[1].Equals("empty"))
@@ -1250,14 +1198,14 @@ namespace DataValidation
                                         }
 
                                         isMap = true;
-                                    }
+                                    
 
 
                                 }
 
 
                             }
-                            else if (line.StartsWith("END-REMOTE-COMMUNICATION"))
+                            else if (line.StartsWith(Keywords.remoteCommunication_end))
                             {
                                 data += "<p>" + line + "</p>";
                             }
@@ -1278,7 +1226,7 @@ namespace DataValidation
 
 
                 
-                catch (Exception e)
+                catch (Exception)
                 {
                     return data;
                 }
@@ -1294,177 +1242,183 @@ namespace DataValidation
             return data;
         }
 
+        /// <summary>
+        /// Method to validate if a value of a section is valid and integer
+        /// </summary>
+        /// <param name="line">The string needs to be checked </param>
+        /// <param name="section">The type of section to which we need to match the line</param>
+        /// <returns></returns>
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-            public string[] ValidateInt(String line, string section)
-            {
-                string[] dataError = new string[2];
-                string error = "";
-                int count = 0;
-                string orginalLine = line;
-                string zeroCheck = @"^.*=\s*0+$";
-                string commentLineCheck = @"^\s*.*\s*//.*$";
-                string[] texts = line.Split('=');
-
-                if (Regex.Match(orginalLine, commentLineCheck).Success)
-                {
-                    line = "<p>" + "<span style='color:red'>" + orginalLine + "&nbsp&nbsp&nbsp" + "ERROR : MIXING STATEMENT AND COMMENT IS NOT ALLOWED" + "</span>" + "</p>";
-                    error = "COMMENT AND STATEMENT IS MIXED IN: " + section;
-                    dataError[0] = line;
-                    dataError[1] = error;
-
-
-                }
-                else if(Regex.Match(orginalLine, zeroCheck).Success && !orginalLine.StartsWith("ID"))
-                {
-                    line = "<p>" + "<span style='color:red'>" + orginalLine + "&nbsp&nbsp&nbsp" + "ERROR : VALUE CANNOT BE 0" + "</span>" + "</p>";
-                    error = "COMMENT AND STATEMENT IS MIXED IN: " + section;
-                    dataError[0] = line;
-                    dataError[1] = error;
-                }
-
-                else if (texts.Length.Equals(2))
-                {
-                    if (!texts[0].Equals(section))
-                    {
-                        line = "<p>" + "<span style='color:red'>" + orginalLine + "&nbsp&nbsp&nbsp" + "ERROR : INVALID" + "ATTRIBUTE" + "NAME" + section + "</span>" + "</p>";
-                        error = "INAVLID ATTRIBUTE NAME: " + section;
-
-                        dataError[0] = line;
-                        dataError[1] = error;
-
-
-                    }
-
-
-                    else if (int.TryParse(texts[1], out count))
-                    {
-                        line = "<p>" + orginalLine + "</p>";
-                        dataError[0] = line;
-                        dataError[1] = "empty";
-
-
-                    }
-                    else
-                    {
-                        line = "<p>" + "<span style='color:red'>" + orginalLine + "&nbsp&nbsp&nbsp" + "ERROR :" + section + " SHOULD BE AN INTEGER" + "</span>" + "</p>";
-
-                        dataError[0] = line;
-                        dataError[1] = section + " IS NOT AN INTEGER";
-
-
-
-                    }
-
-                }
-                else
-                {
-                    line = "<p>" + "<span style='color:red'>" + orginalLine + "&nbsp&nbsp&nbsp" + "ERROR :  MISSING ASSIGNMENT SYMBOL" + "</span>" + "</p>";
-                    dataError[0] = line;
-                    dataError[1] = "NO ASSIGMENT SYMBOL FOUND OF" + section;
-
-
-                }
-
-                return dataError;
-            }
-
-
-            public string[] ValidateDouble(String line, string section)
-            {
-                string[] dataError = new string[2];
-                string error = "";
-                double count;
-                string orginalLine = line;
-                string zeroCheck = @"^.*=\s*0+$";
-                string commentLineCheck = @"^\s*.*\s*//.*$";
-                string[] texts = line.Split('=');
-
-                if (Regex.Match(orginalLine, commentLineCheck).Success)
-                {
-                    line = "<p>" + "<span style='color:red'>" + orginalLine + "&nbsp&nbsp&nbsp" + "ERROR : MIXING STATEMENT AND COMMENT IS NOT ALLOWED" + "</span>" + "</p>";
-                    error = "COMMENT AND STATEMENT IS MIXED IN: " + section;
-                    dataError[0] = line;
-                    dataError[1] = error;
-
-
-                }
-                else if (Regex.Match(orginalLine, zeroCheck).Success)
-                {
-                    line = "<p>" + "<span style='color:red'>" + orginalLine + "&nbsp&nbsp&nbsp" + "ERROR : VALUE CANNOT BE 0" + "</span>" + "</p>";
-                    error = "COMMENT AND STATEMENT IS MIXED IN: " + section;
-                    dataError[0] = line;
-                    dataError[1] = error;
-                }
-                else if (texts.Length.Equals(2))
-                {
-                    if (!texts[0].Equals(section))
-                    {
-                        line = "<p>" + "<span style='color:red'>" + orginalLine + "&nbsp&nbsp&nbsp" + " ERROR : INVALID" + "ATTRIBUTE " + " NAME " + section + "</span>" + "</p>";
-                        error = "INAVLID ATTRIBUTE NAME: " + section;
-
-                        dataError[0] = line;
-                        dataError[1] = error;
-
-
-                    }
-
-
-                    else if (Double.TryParse(texts[1], out count))
-                    {
-                        line = "<p>" + orginalLine + "</p>";
-                        dataError[0] = line;
-                        dataError[1] = "empty";
-
-
-                    }
-                    else
-                    {
-                        line = "<p>" + "<span style='color:red'>" + orginalLine + "&nbsp&nbsp&nbsp" + " ERROR : " + section + " SHOULD BE AN NUMBER" + "</span>" + "</p>";
-
-                        dataError[0] = line;
-                        dataError[1] = section + "IS NOT AN INTEGER";
-
-
-
-                    }
-
-                }
-                else
-                {
-                    line = "<p>" + "<span style='color:red'>" + orginalLine + "&nbsp&nbsp&nbsp" + "ERROR :  MISSING ASSIGNMENT SYMBOL" + "</span>" + "</p>";
-                    dataError[0] = line;
-                    dataError[1] = "NO ASSIGMENT SYMBOL FOUND OF" + section;
-
-
-                }
-
-                return dataError;
-            }
-
-
-
-
-
-
-        public string[] ValidateString(String line, string section)
+        public string[] ValidateInt(String line, string section)
         {
             string[] dataError = new string[2];
             string error = "";
             int count = 0;
+            string orginalLine = line;
+            string zeroCheck = @"^.*=\s*0+$";
+            string commentLineCheck = @"^\s*.*\s*//.*$";
+            string[] texts = line.Split('=');
+
+            if (Regex.Match(orginalLine, commentLineCheck).Success)
+            {
+                line = "<p>" + "<span style='color:red'>" + orginalLine + "&nbsp&nbsp&nbsp" + "ERROR : MIXING STATEMENT AND COMMENT IS NOT ALLOWED" + "</span>" + "</p>";
+                error = "COMMENT AND STATEMENT IS MIXED IN: " + section;
+                dataError[0] = line;
+                dataError[1] = error;
+
+
+            }
+            else if(Regex.Match(orginalLine, zeroCheck).Success && !orginalLine.StartsWith(Keywords.id))
+            {
+                line = "<p>" + "<span style='color:red'>" + orginalLine + "&nbsp&nbsp&nbsp" + "ERROR : VALUE CANNOT BE 0" + "</span>" + "</p>";
+                error = "VALUE IS 0 IN: " + section;
+                dataError[0] = line;
+                dataError[1] = error;
+            }
+
+            else if (texts.Length.Equals(2))
+            {
+                if (!texts[0].Equals(section))
+                {
+                    line = "<p>" + "<span style='color:red'>" + orginalLine + "&nbsp&nbsp&nbsp" + "ERROR : INVALID" + "ATTRIBUTE" + "NAME" + section + "</span>" + "</p>";
+                    error = "INAVLID ATTRIBUTE NAME: " + section;
+
+                    dataError[0] = line;
+                    dataError[1] = error;
+
+
+                }
+
+
+                else if (int.TryParse(texts[1], out count))
+                {
+                    line = "<p>" + orginalLine + "</p>";
+                    dataError[0] = line;
+                    dataError[1] = "empty";
+
+
+                }
+                else
+                {
+                    line = "<p>" + "<span style='color:red'>" + orginalLine + "&nbsp&nbsp&nbsp" + "ERROR :" + section + " SHOULD BE AN INTEGER" + "</span>" + "</p>";
+
+                    dataError[0] = line;
+                    dataError[1] = section + " IS NOT AN INTEGER";
+
+
+
+                }
+
+            }
+            else
+            {
+                line = "<p>" + "<span style='color:red'>" + orginalLine + "&nbsp&nbsp&nbsp" + "ERROR :  MISSING ASSIGNMENT SYMBOL" + "</span>" + "</p>";
+                dataError[0] = line;
+                dataError[1] = "NO ASSIGMENT SYMBOL FOUND OF" + section;
+
+
+            }
+
+            return dataError;
+        }
+
+
+
+        /// <summary>
+        /// Method to validate if a value of a section is valid and double
+        /// </summary>
+        /// <param name="line">The string needs to be checked </param>
+        /// <param name="section">The type of section to which we need to match the line</param>
+        /// <returns></returns>
+
+
+        public string[] ValidateDouble(String line, string section)
+        {
+            string[] dataError = new string[2];
+            string error = "";
+            double count;
+            string orginalLine = line;
+            string zeroCheck = @"^.*=\s*0+$";
+            string commentLineCheck = @"^\s*.*\s*//.*$";
+            string[] texts = line.Split('=');
+
+            if (Regex.Match(orginalLine, commentLineCheck).Success)
+            {
+                line = "<p>" + "<span style='color:red'>" + orginalLine + "&nbsp&nbsp&nbsp" + "ERROR : MIXING STATEMENT AND COMMENT IS NOT ALLOWED" + "</span>" + "</p>";
+                error = "COMMENT AND STATEMENT IS MIXED IN: " + section;
+                dataError[0] = line;
+                dataError[1] = error;
+
+
+            }
+            else if (Regex.Match(orginalLine, zeroCheck).Success)
+            {
+                line = "<p>" + "<span style='color:red'>" + orginalLine + "&nbsp&nbsp&nbsp" + "ERROR : VALUE CANNOT BE 0" + "</span>" + "</p>";
+                error = "VALUE IS 0 IN: " + section;
+                dataError[0] = line;
+                dataError[1] = error;
+            }
+            else if (texts.Length.Equals(2))
+            {
+                if (!texts[0].Trim().Equals(section))
+                {
+                    line = "<p>" + "<span style='color:red'>" + orginalLine + "&nbsp&nbsp&nbsp" + " ERROR : INVALID" + "ATTRIBUTE " + " NAME " + section + "</span>" + "</p>";
+                    error = "INAVLID ATTRIBUTE NAME: " + section;
+
+                    dataError[0] = line;
+                    dataError[1] = error;
+
+
+                }
+
+
+                else if (Double.TryParse(texts[1], out count))
+                {
+                    line = "<p>" + orginalLine + "</p>";
+                    dataError[0] = line;
+                    dataError[1] = "empty";
+
+
+                }
+                else
+                {
+                    line = "<p>" + "<span style='color:red'>" + orginalLine + "&nbsp&nbsp&nbsp" + " ERROR : " + section + " SHOULD BE AN NUMBER" + "</span>" + "</p>";
+
+                    dataError[0] = line;
+                    dataError[1] = section + " IS NOT AN INTEGER";
+
+
+
+                }
+
+            }
+            else
+            {
+                line = "<p>" + "<span style='color:red'>" + orginalLine + "&nbsp&nbsp&nbsp" + "ERROR :  MISSING ASSIGNMENT SYMBOL" + "</span>" + "</p>";
+                dataError[0] = line;
+                dataError[1] = "NO ASSIGMENT SYMBOL FOUND OF " + section;
+
+
+            }
+
+            return dataError;
+        }
+
+
+        /// <summary>
+        /// Method to validate if a value of a section is valid and string
+        /// </summary>
+        /// <param name="line">The string needs to be checked </param>
+        /// <param name="section">The type of section to which we need to match the line</param>
+        /// <returns></returns>
+
+
+
+        public string[] ValidateString(String line, string section, bool isFile)
+        {
+            string[] dataError = new string[2];
+            string error = "";
             string orginalLine = line;
             string commentLineCheck = @"^\s*.*\s*//.*$";
             string[] texts = line.Split('=');
@@ -1482,24 +1436,43 @@ namespace DataValidation
             }
             else if (texts.Length.Equals(2))
             {
-                if (!texts[0].Equals(section))
+                if (!texts[0].Trim().Equals(section))
                 {
-                    line = "<p>" + "<span style='color:red'>" + orginalLine + "&nbsp&nbsp&nbsp" + "ERROR : INVALID" + "ATTRIBUTE" + "NAME" + section + "</span>" + "</p>";
-                    error = "INAVLID ATTRIBUTE NAME: " + section;
+                    line = "<p>" + "<span style='color:red'>" + orginalLine + "&nbsp&nbsp&nbsp" + "ERROR : INVALID ATTRIBUTE NAME" + section + "</span>" + "</p>";
+                    
 
                     dataError[0] = line;
-                    dataError[1] = error;
-
+                    dataError[1] = "INAVLID ATTRIBUTE NAME: " + section;
 
                 }
                 else if (Regex.Match(texts[1],pattern).Success)
                 {
+                    if (isFile)
+                    {
+                        if (texts[1].Trim('"').IndexOfAny(Path.GetInvalidFileNameChars()) == -1)
+                        {
+                            line = "<p>" + orginalLine + "</p>";
+                            dataError[0] = line;
+                            dataError[1] = "empty";
 
-                    line = "<p>" + orginalLine + "</p>";
-                    dataError[0] = line;
-                    dataError[1] = "empty";
-                   
+                        }
+                        else
+                        {
+                            line = "<p>" + orginalLine + "</p>";
+                            dataError[0] = line;
+                            dataError[1] = "INVALID FILE NAME";
 
+                        }
+
+
+                    }
+                    else
+                    {
+                        line = "<p>" + orginalLine + "</p>";
+                        dataError[0] = line;
+                        dataError[1] = "empty";
+
+                    }
 
                 }
                 else
@@ -1522,6 +1495,15 @@ namespace DataValidation
             
             return dataError;
         }
+
+        /// <summary>
+        /// Method to validate if a value of a section is valid and MAP
+        /// </summary>
+        /// <param name="line">The string needs to be checked </param>
+        /// <param name="section">The type of section to which we need to match the line</param>
+        /// <returns></returns>
+
+
         public string[] ValidateMap(String line, string section, string file)
         {
             string[] dataError = new string[2];
@@ -1560,7 +1542,7 @@ namespace DataValidation
             }
             else if (texts.Length.Equals(2))
             {
-                if (!texts[0].Equals(section))
+                if (!texts[0].Trim().Equals(section))
                 {
                     line = "<p>" + "<span style='color:red'>" + orginalLine + "&nbsp&nbsp&nbsp" + " ERROR : INVALID" + "ATTRIBUTE" + "NAME" + section + "</span>" + "</p>";
                     error = "INAVLID ATTRIBUTE NAME: " + section;
